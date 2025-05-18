@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: plan-your-trip-bot
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5440/postgres}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+
+bot:
+  username: plan_your_trip_bot
+  token: ${BOT_TOKEN:}
