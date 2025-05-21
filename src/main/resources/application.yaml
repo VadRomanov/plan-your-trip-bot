@@ -1,16 +1,25 @@
 spring:
   application:
     name: plan-your-trip-bot
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5440/postgres}
-    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    baseline-version: 0
+
+core-service:
+  port: ${CORE_PORT:8180}
+  rest-base-url: ${CORE_URL:http://localhost}:${core-service.port}
+
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+
 
 bot:
   username: plan_your_trip_bot
   token: ${BOT_TOKEN:}
+
+http:
+  client:
+    pool:
+      max-total: 100
+      default-max-per-route: 150
+    feignLoggerLevel: ${FEIGN_LOGGING_LEVEL:BASIC}
