@@ -1,12 +1,13 @@
 package com.planyourtrip.bot.service.command.trip;
 
+import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
-import com.planyourtrip.bot.service.impl.TripServiceImpl;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,24 +29,29 @@ public class MyTripsCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
-        return processInitResponse(commandDto.getUserId(), commandDto.getChatId());
+        return processInitResponse(commandDto.getTelegramId(), commandDto.getChatId());
     }
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        if (callbackDto.getCallbackData().length == 1) {
-            return processInitResponse(callbackDto.getUserId(), callbackDto.getChatId());
-        } else {
-            var trip = tripService.getTripById(Long.parseLong(callbackDto.getCallbackData()[1]));
+        var step = callbackDto.getCallbackData().length;
+        if (step == 1) {
+            return processInitResponse(callbackDto.getTelegramId(), callbackDto.getChatId());
+        } else if (step == 2) {
+            var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
+            var trip = tripService.getTripById(tripId);
             return ResponseDto.builder()
-                    .text(String.format("%s%s", trip.getName(), trip.getExpired() ? " (Завершено)" : Strings.EMPTY))
+                    .text(String.format("%s%s", trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY))
                     .chatId(callbackDto.getChatId())
+                    .keyboard(getActionsKeyboard(tripId))
                     .build();
+        } else {
+            return returnErrorMessage(callbackDto.getChatId());
         }
     }
 
-    private ResponseDto processInitResponse(long userId, long chatId) {
-        var trips = tripService.getTripsByUserId(userId);
+    private ResponseDto processInitResponse(long telegramId, long chatId) {
+        var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_INIT_RESPONSE)
                 .chatId(chatId)
@@ -53,14 +59,14 @@ public class MyTripsCommand extends AbstractCommand {
                 .build();
     }
 
-    private ReplyKeyboard getActionsKeyboard(TripDto trip) {
+    private ReplyKeyboard getActionsKeyboard(long tripId) {
         return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.EDIT_TRIP.getDescription(),
-                        String.format("%s/%s", CommandType.EDIT_TRIP.getName(), trip.getId())),
+                        String.format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.DELETE_TRIP.getDescription(),
-                        String.format("%s/%s", CommandType.DELETE_TRIP.getName(), trip.getId()))
+                        String.format("%s/%s", CommandType.DELETE_TRIP.getName(), tripId))
         ));
     }
 

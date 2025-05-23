@@ -18,6 +18,7 @@ public class BotAnswer {
     public static final String DELETE_CONFIRMATION_BUTTON = "Подтвердить удаление.";
 
     public static final String EXPIRED = " (Завершено)";
+    public static final String CONFIRMED = "ДА";
 
     public static final String HELP_ANSWER = String.format("""
                     Я помогу тебе создать и управлять твоими путешествиями ✈️.
@@ -27,9 +28,18 @@ public class BotAnswer {
                     /%s - удалить путешествие""",
             CommandType.NEW_TRIP.getName(), CommandType.MY_TRIPS.getName(), CommandType.DELETE_TRIP.getName());
     public static final String START_ANSWER = """
-            \uD83C\uDF0D Добро пожаловать! Я помогу тебе планировать путешествия.
-            Нажимай на кнопку под этим сообщением, чтоб выбрать действие""";
+            \uD83C\uDF0D Добро пожаловать, %s!
+            Я помогу тебе планировать путешествия.
+            Нажимай на кнопку под этим сообщением, чтоб выбрать следующее действие""";
+    public static final String RESTART_ANSWER = """
+            \uD83C\uDF0D C возвращением, %s!
+            Я помогу тебе планировать путешествия.
+            Нажимай на кнопку под этим сообщением, чтоб выбрать следующее действие""";
     public static final String DEFAULT_ANSWER = """
-            \uD83C\uDF0D Команда не распознана.
-            Нажимай на кнопку под этим сообщением, чтоб выбрать действие""";
+            \uD83C\uDF0D Извините, я не понимаю.
+            Попробуйте еще раз, либо нажмите на кнопку под этим сообщением, чтобы выбрать действие""";
+
+    public static final String SOMETHING_WRONG = """
+            \uD83C\uDF0D Что-то пошло не так, давайте попробуем начать сначала.
+            Нажмите, пожалуйста, на кнопку под этим сообщением, чтобы выбрать действие""";
 }

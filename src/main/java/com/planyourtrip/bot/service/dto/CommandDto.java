@@ -1,17 +1,13 @@
 package com.planyourtrip.bot.service.dto;
 
-import com.planyourtrip.bot.constant.CommandType;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
-public class CommandDto implements AbstractRequestDto {
-    @NonNull
-    private CommandType commandType;
-    @NonNull
-    private Long userId;
-    @NonNull
-    private Long chatId;
+@SuperBuilder
+public class CommandDto extends AbstractRequestDto {
 }

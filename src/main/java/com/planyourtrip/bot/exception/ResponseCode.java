@@ -16,8 +16,9 @@ public enum ResponseCode {
     USER_ID_AND_TRIP_NAME_UNIQUE_VIOLATION(1, "У вас уже есть поездка с таким названием. " +
             "Требуется уникальное название. Уточните, пожалуйста."),
     INVALID_DATE_FORMATE(2, "Неверный формат даты. Укажите, пожалуйста, дату в формате %s (например, %s)."),
-    ENTITY_NOT_FOUND(3, "Запись в таблице %s не найдена. Id=%s."),
-    INVALID_TIMELINE(4, "К сожалению, путешествия в прошлое пока что запрещены \uD83D\uDE01.");
+    ENTITY_NOT_FOUND(3, "Запись не найдена."),
+    INVALID_TIMELINE(4, "К сожалению, путешествия в прошлое пока что запрещены \uD83D\uDE01."),
+    INTERNAL_ERROR(5, "Внутренняя ошибка.");
 
     static {
         final var set = new HashSet<Integer>();

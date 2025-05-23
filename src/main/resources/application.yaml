@@ -2,8 +2,11 @@ spring:
   application:
     name: plan-your-trip-bot
 
+server:
+  port: 8081
+
 core-service:
-  port: ${CORE_PORT:8180}
+  port: ${CORE_PORT:8080}
   rest-base-url: ${CORE_URL:http://localhost}:${core-service.port}
 
 info:
@@ -11,7 +14,6 @@ info:
     name: @project.name@
     description: @project.description@
     version: @project.version@
-
 
 bot:
   username: plan_your_trip_bot
@@ -22,4 +24,4 @@ http:
     pool:
       max-total: 100
       default-max-per-route: 150
-    feignLoggerLevel: ${FEIGN_LOGGING_LEVEL:BASIC}
+    feignLoggerLevel: ${FEIGN_LOGGING_LEVEL:FULL}

@@ -19,7 +19,6 @@ public class RetryConfig {
         var simpleRetryPolicyUp10Attempts = new SimpleRetryPolicy(10);
         var retryPolicy = new ExceptionClassifierRetryPolicy();
         Map<Class<? extends Throwable>, RetryPolicy> policyMap = Map.of(
-                //      TokenExpiredException.class, new SimpleRetryPolicy(2),
                 RetryableException.class, simpleRetryPolicyUp10Attempts);
         retryPolicy.setPolicyMap(policyMap);
         return retryPolicy;

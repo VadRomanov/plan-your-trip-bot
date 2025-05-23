@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 @Getter
 public final class BusinessException extends RuntimeException {
-    public static final String DELIMITER = ", ";
+    public static final String DELIMITER = " ";
     private final ResponseCode responseCode;
     private final List<Object> params;
     private final Object data;

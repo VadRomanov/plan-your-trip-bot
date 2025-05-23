@@ -1,8 +1,10 @@
 package com.planyourtrip.bot.utils;
 
+import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.TripDto;
 import lombok.experimental.UtilityClass;
+import org.apache.logging.log4j.util.Strings;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -20,7 +22,7 @@ public class ReplyKeyboardBuilder {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var trip : trips) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
-                    trip.getName(),
+                    String.format("%s%s", trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY),
                     String.format("%s/%s", commandType.getName(), trip.getId())
             );
             buttons.add(newTripButton);

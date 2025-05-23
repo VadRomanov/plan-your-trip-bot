@@ -4,7 +4,7 @@ import com.planyourtrip.bot.service.BotProcessor;
 import com.planyourtrip.bot.service.SendService;
 import com.planyourtrip.bot.service.command.EventHandler;
 import com.planyourtrip.bot.service.dto.ResponseDto;
-import com.planyourtrip.bot.service.mapper.Mapper;
+import com.planyourtrip.bot.service.mapper.TelegramMapper;
 import com.planyourtrip.bot.service.state.UserStateManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,17 +22,22 @@ public class BotProcessorImpl implements BotProcessor {
     private final EventHandler eventHandler;
     private final UserStateManager userStateManager;
     private final SendService sendService;
-    private final Mapper mapper;
+    private final TelegramMapper telegramMapper;
 
     @Override
     public void process(Update update) {
         log.debug("Start process {}", update);
         ResponseDto response;
-        if (update.hasMessage()) {
-            response = processMessage(update.getMessage());
-        } else if (update.hasCallbackQuery()) {
-            response = processCallback(update.getCallbackQuery());
-        } else {
+        try {
+            if (update.hasMessage()) {
+                response = processMessage(update.getMessage());
+            } else if (update.hasCallbackQuery()) {
+                response = processCallback(update.getCallbackQuery());
+            } else {
+                response = processDefaultCommand(update);
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while processing {}. Error {}", update, e.getMessage(), e);
             response = processDefaultCommand(update);
         }
 
@@ -44,16 +49,16 @@ public class BotProcessorImpl implements BotProcessor {
         log.info("Message was recognized as message {} chatId {}", message.getMessageId(), message.getChatId());
         if (message.isCommand()) {
             userStateManager.clearState(message.getChatId());
-            return eventHandler.handleEvent(mapper.toCommandDto(message));
+            return eventHandler.handleEvent(telegramMapper.toCommandDto(message));
         } else if (message.hasText()) {
             var state = userStateManager.getState(message.getChatId());
             if (nonNull(state)) {
-                return eventHandler.handleEvent(mapper.toResponseMessageDto(message, state));
+                return eventHandler.handleEvent(telegramMapper.toResponseMessageDto(message, state));
             } else {
-                return eventHandler.handleEvent(mapper.toDefaultCommandDto(message));
+                return eventHandler.handleEvent(telegramMapper.toDefaultCommandDto(message));
             }
         } else {
-            return eventHandler.handleEvent(mapper.toDefaultCommandDto(message));
+            return eventHandler.handleEvent(telegramMapper.toDefaultCommandDto(message));
         }
     }
 
@@ -61,14 +66,14 @@ public class BotProcessorImpl implements BotProcessor {
         log.info("Message was recognized as callback {} chatId {}", callback.getId(),
                 callback.getMessage().getChatId());
         userStateManager.clearState(callback.getMessage().getChatId());
-        var callbackDto = mapper.toCallbackDto(callback);
+        var callbackDto = telegramMapper.toCallbackDto(callback);
 
         return eventHandler.handleEvent(callbackDto);
     }
 
     private ResponseDto processDefaultCommand(Update update) {
         log.info("Message was not recognized. will be processed by default {}", update.getUpdateId());
-        var defaultCommand = mapper.toDefaultCommandDto(update);
+        var defaultCommand = telegramMapper.toDefaultCommandDto(update);
 
         return eventHandler.handleEvent(defaultCommand);
     }
