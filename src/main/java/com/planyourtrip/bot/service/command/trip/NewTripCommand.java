@@ -16,7 +16,6 @@ import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,7 +51,7 @@ public class NewTripCommand extends AbstractCommand {
             };
         } catch (BusinessException e) {
             log.error("Error while process message command {}", CommandType.NEW_TRIP.getName(), e);
-            return returnErrorMessage(messageDto.getChatId(), messageDto.getMessageId());
+            return returnWarningMessage(e.getMessage());
         }
     }
 
@@ -61,7 +60,6 @@ public class NewTripCommand extends AbstractCommand {
                 new UserState(CommandType.NEW_TRIP, State.AWAIT_NAME.name(), null));
         return ResponseDto.builder()
                 .text(format(BotAnswer.NEW_TRIP_INIT_RESPONSE, LocalDateTime.now().getYear()))
-                .chatId(chatId)
                 .build();
     }
 
@@ -74,8 +72,6 @@ public class NewTripCommand extends AbstractCommand {
                 .setState(State.AWAIT_START_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_NAME_RESPONSE)
-                .chatId(chatId)
-                .replyToMessageId(messageDto.getMessageId())
                 .build();
     }
 
@@ -88,8 +84,6 @@ public class NewTripCommand extends AbstractCommand {
                 .setState(State.AWAIT_END_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_START_DT_RESPONSE)
-                .chatId(chatId)
-                .replyToMessageId(messageDto.getMessageId())
                 .build();
     }
 
@@ -101,14 +95,12 @@ public class NewTripCommand extends AbstractCommand {
         getUserStateManager().clearState(chatId);
         return ResponseDto.builder()
                 .text(format(BotAnswer.NEW_TRIP_FINAL_RESPONSE, trip.getName()))
-                .chatId(chatId)
-                .replyToMessageId(messageDto.getMessageId())
                 .keyboard(getFinalKeyboard(trip.getId()))
                 .build();
     }
 
-    private ReplyKeyboard getFinalKeyboard(long tripId) {
-        return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+    private List<ReplyKeyboardBuilder.KeyboardButton> getFinalKeyboard(long tripId) {
+        return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.ADD_TICKET.getDescription(),
                         format("%s/%s", CommandType.ADD_TICKET.getName(), tripId)),
@@ -124,7 +116,7 @@ public class NewTripCommand extends AbstractCommand {
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.MY_TRIPS.getDescription(),
                         CommandType.MY_TRIPS.getName())
-        ));
+        );
     }
 
     @Override

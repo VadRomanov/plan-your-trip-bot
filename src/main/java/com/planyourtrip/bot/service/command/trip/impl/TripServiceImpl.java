@@ -59,12 +59,6 @@ public class TripServiceImpl implements TripService {
     public Collection<TripDto> getTripsByTelegramId(long telegramId) {
         log.debug("Get trips by telegramId {}", telegramId);
         var trips = tripClient.getTripsByUser(telegramId);
-        trips.forEach(trip -> {
-            if (trip.getEndDate().isBefore(LocalDate.now())) {
-                trip.setExpired(true);
-            }
-        });
-
         log.info("{} trips obtained by telegramId {}", trips.size(), telegramId);
         return trips;
     }
@@ -73,7 +67,6 @@ public class TripServiceImpl implements TripService {
     public TripDto getTripById(long id) {
         log.debug("Get trip by id {}", id);
         var trip = tripClient.getTrip(id);
-        trip.setExpired(trip.getEndDate().isBefore(LocalDate.now()));
         log.info("Trip obtained by id {}", trip);
         return trip;
     }

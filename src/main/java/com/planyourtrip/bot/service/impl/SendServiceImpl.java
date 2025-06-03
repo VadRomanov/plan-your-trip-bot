@@ -2,6 +2,7 @@ package com.planyourtrip.bot.service.impl;
 
 import com.planyourtrip.bot.service.SendService;
 import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,8 @@ public class SendServiceImpl implements SendService {
             var message = SendMessage.builder()
                     .text(responseDto.getText())
                     .chatId(responseDto.getChatId())
-                    .replyMarkup(responseDto.getKeyboard())
-                    .replyToMessageId(responseDto.getMessageId())
+                    .replyMarkup(ReplyKeyboardBuilder.buildInlineKeyboard(responseDto.getKeyboard()))
+                    .replyToMessageId(responseDto.getReplyToMessageId())
                     .parseMode(ParseMode.HTML)
                     .build();
 

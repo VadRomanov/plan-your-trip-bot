@@ -20,18 +20,17 @@ public class DefaultCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
-        var keyboard = ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+        var keyboard = List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         NEW_TRIP.getDescription(), NEW_TRIP.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         MY_TRIPS.getDescription(), MY_TRIPS.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         HELP.getDescription(), HELP.getName())
-        ));
+        );
 
         return ResponseDto.builder()
                 .text(BotAnswer.DEFAULT_ANSWER)
-                .chatId(commandDto.getChatId())
                 .keyboard(keyboard)
                 .build();
     }

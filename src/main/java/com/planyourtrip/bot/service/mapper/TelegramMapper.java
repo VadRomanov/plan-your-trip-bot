@@ -7,7 +7,6 @@ import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.state.UserState;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 @Component
@@ -49,9 +48,13 @@ public class TelegramMapper {
                 .build();
     }
 
-    public CommandDto toDefaultCommandDto(Update update) {
-        return toDefaultCommandDto(update.getMessage());
-    }
+  public CommandDto toDefaultCommandDto(CallbackQuery callbackQuery) {
+    return CommandDto.builder()
+        .commandType(CommandType.DEFAULT)
+        .telegramId(callbackQuery.getFrom().getId())
+        .chatId(callbackQuery.getMessage().getChatId())
+        .build();
+  }
 
     public CommandDto toDefaultCommandDto(Message message) {
         return createCommandDto(CommandType.DEFAULT, message);

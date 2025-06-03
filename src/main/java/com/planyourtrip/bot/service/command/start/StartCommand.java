@@ -10,7 +10,6 @@ import com.planyourtrip.bot.service.mapper.Mapper;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,20 +36,19 @@ public class StartCommand extends AbstractCommand {
                 .text(String.format(
                         isNull(user) ? BotAnswer.START_ANSWER : BotAnswer.RESTART_ANSWER,
                         Objects.requireNonNullElse(commandDto.getFirstName(), commandDto.getUserName())))
-                .chatId(commandDto.getChatId())
                 .keyboard(createReplyKeyboard())
                 .build();
     }
 
-    private ReplyKeyboard createReplyKeyboard() {
-        return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+    private List<ReplyKeyboardBuilder.KeyboardButton> createReplyKeyboard() {
+        return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         NEW_TRIP.getDescription(), NEW_TRIP.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         MY_TRIPS.getDescription(), MY_TRIPS.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         HELP.getDescription(), HELP.getName())
-        ));
+        );
     }
 
     @Override

@@ -1,8 +1,6 @@
-package com.planyourtrip.bot.service.command.help;
+package com.planyourtrip.bot.service.command.impl;
 
-import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
@@ -11,25 +9,28 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class HelpCommand extends AbstractCommand {
+public class CancelCommand extends AbstractCommand {
+
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
-        return prepareResponse();
+        return processCancel(commandDto.getChatId());
     }
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        return prepareResponse();
+        return processCancel(callbackDto.getChatId());
     }
 
-    private ResponseDto prepareResponse() {
+    private ResponseDto processCancel(long chatId) {
+        var state = getReplyKeyboardHistory().restoreState(chatId);
         return ResponseDto.builder()
-                .text(BotAnswer.HELP_ANSWER)
+                .text(state.getText())
+                .keyboard(state.getKeyboard())
                 .build();
     }
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.HELP;
+        return CommandType.CANCEL;
     }
 }

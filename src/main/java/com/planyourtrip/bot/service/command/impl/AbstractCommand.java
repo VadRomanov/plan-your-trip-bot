@@ -8,11 +8,11 @@ import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.service.state.callback.ReplyKeyboardHistory;
 import com.planyourtrip.bot.service.state.impl.UserStateManagerImpl;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.List;
 
@@ -27,6 +27,8 @@ public abstract class AbstractCommand implements Command {
     private CommandProcessorRegistry commandProcessorRegistry;
     @Autowired
     private UserStateManagerImpl userStateManager;
+    @Autowired
+    private ReplyKeyboardHistory replyKeyboardHistory;
 
     @Override
     public void afterPropertiesSet() {
@@ -53,19 +55,19 @@ public abstract class AbstractCommand implements Command {
         return null;
     }
 
-    protected ResponseDto returnErrorMessage(Long chatId, Integer messageId) {
-        return returnErrorMessage(BotAnswer.DEFAULT_ANSWER, chatId, messageId);
+    protected ResponseDto returnErrorMessage() {
+        return returnErrorMessage(BotAnswer.DEFAULT_ANSWER);
     }
 
-    protected ResponseDto returnErrorMessage(Long chatId) {
-        return returnErrorMessage(BotAnswer.SOMETHING_WRONG, chatId, null);
-    }
-
-    protected ResponseDto returnErrorMessage(String message, Long chatId, Integer messageId) {
+    protected ResponseDto returnWarningMessage(String message) {
         return ResponseDto.builder()
                 .text(message)
-                .chatId(chatId)
-                .replyToMessageId(messageId)
+                .build();
+    }
+
+    protected ResponseDto returnErrorMessage(String message) {
+        return ResponseDto.builder()
+                .text(message)
                 .keyboard(defaultKeyboard())
                 .build();
     }
@@ -74,14 +76,18 @@ public abstract class AbstractCommand implements Command {
         return userStateManager;
     }
 
-    private ReplyKeyboard defaultKeyboard() {
-        return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+    protected ReplyKeyboardHistory getReplyKeyboardHistory() {
+        return replyKeyboardHistory;
+    }
+
+    private List<ReplyKeyboardBuilder.KeyboardButton> defaultKeyboard() {
+        return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         NEW_TRIP.getDescription(), NEW_TRIP.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         MY_TRIPS.getDescription(), MY_TRIPS.getName()),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         HELP.getDescription(), HELP.getName())
-        ));
+        );
     }
 }

@@ -12,13 +12,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @UtilityClass
 public class ReplyKeyboardBuilder {
     private static final int DEFAULT_BUTTON_PER_ROW_COUNT = 2;
 
-    public static ReplyKeyboard buildTripsInlineKeyboard(Collection<TripDto> trips, CommandType commandType) {
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildTripsButtons(Collection<TripDto> trips,
+                                                                              CommandType commandType) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var trip : trips) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
@@ -27,8 +29,7 @@ public class ReplyKeyboardBuilder {
             );
             buttons.add(newTripButton);
         }
-        return buildInlineKeyboard(buttons);
-
+        return buttons;
     }
 
     public static ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons) {
@@ -59,6 +60,18 @@ public class ReplyKeyboardBuilder {
         return InlineKeyboardMarkup.builder()
                 .keyboard(rowList)
                 .build();
+    }
+
+    public static List<KeyboardButton> addCancelIfNeeded(List<KeyboardButton> keyboard) {
+        var contains = keyboard.stream()
+                .anyMatch(b -> b.text.equals(BotAnswer.CANCEL));
+
+        if (!contains) {
+            var newList = new ArrayList<>(keyboard);
+            newList.add(new KeyboardButton(BotAnswer.CANCEL, CommandType.CANCEL.getName()));
+            return Collections.unmodifiableList(newList);
+        }
+        return keyboard;
     }
 
 

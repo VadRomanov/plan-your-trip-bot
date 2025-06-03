@@ -1,8 +1,10 @@
 package com.planyourtrip.bot.service.impl;
 
+import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.service.BotProcessor;
 import com.planyourtrip.bot.service.SendService;
 import com.planyourtrip.bot.service.command.EventHandler;
+import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.service.mapper.TelegramMapper;
 import com.planyourtrip.bot.service.state.UserStateManager;
@@ -34,11 +36,12 @@ public class BotProcessorImpl implements BotProcessor {
             } else if (update.hasCallbackQuery()) {
                 response = processCallback(update.getCallbackQuery());
             } else {
+                log.error("Message was not recognized. Will be processed by default {}", update.getUpdateId());
                 response = processDefaultCommand(update);
             }
         } catch (Exception e) {
             log.error("Error occurred while processing {}. Error {}", update, e.getMessage(), e);
-            response = processDefaultCommand(update);
+            response = processErrorCommand(update);
         }
 
         sendService.sendResponse(response);
@@ -72,9 +75,18 @@ public class BotProcessorImpl implements BotProcessor {
     }
 
     private ResponseDto processDefaultCommand(Update update) {
-        log.info("Message was not recognized. will be processed by default {}", update.getUpdateId());
-        var defaultCommand = telegramMapper.toDefaultCommandDto(update);
+        CommandDto defaultCommand;
+        if (update.hasCallbackQuery()) {
+            defaultCommand = telegramMapper.toDefaultCommandDto(update.getCallbackQuery());
+        } else {
+            defaultCommand = telegramMapper.toDefaultCommandDto(update.getMessage());
+        }
 
         return eventHandler.handleEvent(defaultCommand);
+    }
+
+    private ResponseDto processErrorCommand(Update update) {
+        var result = processDefaultCommand(update);
+        return result.setText(BotAnswer.SOMETHING_WRONG);
     }
 }

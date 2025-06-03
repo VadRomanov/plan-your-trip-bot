@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,57 +28,55 @@ public class MyTripsCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
-        return processInitResponse(commandDto.getTelegramId(), commandDto.getChatId());
+        return processInitResponse(commandDto.getTelegramId());
     }
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
         var step = callbackDto.getCallbackData().length;
         if (step == 1) {
-            return processInitResponse(callbackDto.getTelegramId(), callbackDto.getChatId());
+            return processInitResponse(callbackDto.getTelegramId());
         } else if (step == 2) {
             var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
             var trip = tripService.getTripById(tripId);
             return ResponseDto.builder()
                     .text(String.format("%s%s", trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY))
-                    .chatId(callbackDto.getChatId())
                     .keyboard(getActionsKeyboard(tripId))
                     .build();
         } else {
-            return returnErrorMessage(callbackDto.getChatId());
+            return returnErrorMessage();
         }
     }
 
-    private ResponseDto processInitResponse(long telegramId, long chatId) {
+    private ResponseDto processInitResponse(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_INIT_RESPONSE)
-                .chatId(chatId)
                 .keyboard(trips.isEmpty() ? getNewTripKeyboard() : getTripsKeyboard(trips))
                 .build();
     }
 
-    private ReplyKeyboard getActionsKeyboard(long tripId) {
-        return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+    private List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard(long tripId) {
+        return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.EDIT_TRIP.getDescription(),
                         String.format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.DELETE_TRIP.getDescription(),
                         String.format("%s/%s", CommandType.DELETE_TRIP.getName(), tripId))
-        ));
+        );
     }
 
-    private ReplyKeyboard getTripsKeyboard(Collection<TripDto> trips) {
-        return ReplyKeyboardBuilder.buildTripsInlineKeyboard(trips, CommandType.MY_TRIPS);
+    private List<ReplyKeyboardBuilder.KeyboardButton> getTripsKeyboard(Collection<TripDto> trips) {
+        return ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TRIPS);
     }
 
-    private ReplyKeyboard getNewTripKeyboard() {
-        return ReplyKeyboardBuilder.buildInlineKeyboard(List.of(
+    private List<ReplyKeyboardBuilder.KeyboardButton> getNewTripKeyboard() {
+        return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.NEW_TRIP.getDescription(),
                         CommandType.NEW_TRIP.getName())
-        ));
+        );
     }
 
     @Override

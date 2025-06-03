@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum CommandType {
     NEW_TRIP("new_trip", "Create a new trip"),
     MY_TRIPS("my_trips", "List all your trips"),
-    DELETE_TRIP("delete_trip", "Delete current or selected trip"),
+    DELETE_TRIP("delete_trip", "Delete current trip"),
     DUPLICATE_TRIP("duplicate_trip", "Create a copy of an existing trip"),
     EDIT_TRIP("edit_trip", "Edit current trip"),
     ADD_HOTEL("add_hotel", "Add a hotel or accommodation"),
@@ -31,7 +31,8 @@ public enum CommandType {
     MENU("menu", "Open main menu with navigation options"),
     START("start", "Start using the bot"),
     LANGUAGE("language", "Change your preferred language"),
-    DEFAULT("default", "Service command for unavailable command");
+    DEFAULT("default", "Service command for unavailable command"),
+    CANCEL("cancel", "Service command for canceling");
 
     private final String name;
     private final String description;
