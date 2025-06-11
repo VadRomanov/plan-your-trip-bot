@@ -12,6 +12,8 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,7 +26,9 @@ public class SendServiceImpl implements SendService {
             var message = SendMessage.builder()
                     .text(responseDto.getText())
                     .chatId(responseDto.getChatId())
-                    .replyMarkup(ReplyKeyboardBuilder.buildInlineKeyboard(responseDto.getKeyboard()))
+                    .replyMarkup(nonNull(responseDto.getKeyboard())
+                            ? ReplyKeyboardBuilder.buildInlineKeyboard(responseDto.getKeyboard())
+                            : null)
                     .replyToMessageId(responseDto.getReplyToMessageId())
                     .parseMode(ParseMode.HTML)
                     .build();

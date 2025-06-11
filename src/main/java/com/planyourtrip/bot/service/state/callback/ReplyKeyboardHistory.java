@@ -22,7 +22,12 @@ public class ReplyKeyboardHistory {
 
     public State restoreState(long chatId) {
         var stack = KEYBOARDS.get(chatId);
+        stack.pop();
         return stack.isEmpty() ? null : stack.pop();
+    }
+
+    public void clear(long chatId) {
+        KEYBOARDS.remove(chatId);
     }
 
     public boolean isEmpty(long chatId) {

@@ -2,6 +2,7 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
+import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.dto.CallbackDto;
@@ -24,7 +25,7 @@ import static java.lang.String.format;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NewTripCommand extends AbstractCommand {
+public class EditTripCommand extends AbstractCommand {
 
     private final TripService tripService;
     private final UserService userService;
@@ -37,16 +38,25 @@ public class NewTripCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        return processInitResponse(callbackDto.getChatId());
+        var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
+        return ResponseDto.builder()
+                .text(BotAnswer.EDIT_TRIP_RESPONSE)
+                .keyboard(getFinalKeyboard(tripId))
+                .build();
     }
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
-        return switch (State.valueOf(messageDto.getState().getState())) {
-            case AWAIT_NAME -> processNameResponse(messageDto);
-            case AWAIT_START_DT -> processStartDtResponse(messageDto);
-            case AWAIT_END_DT -> processEndDtResponse(messageDto);
-        };
+        try {
+            return switch (State.valueOf(messageDto.getState().getState())) {
+                case AWAIT_NAME -> processNameResponse(messageDto);
+                case AWAIT_START_DT -> processStartDtResponse(messageDto);
+                case AWAIT_END_DT -> processEndDtResponse(messageDto);
+            };
+        } catch (BusinessException e) {
+            log.error("Error while process message command {}", CommandType.NEW_TRIP.getName(), e);
+            return returnWarningMessage(e.getMessage());
+        }
     }
 
     private ResponseDto processInitResponse(long chatId) {
@@ -105,9 +115,6 @@ public class NewTripCommand extends AbstractCommand {
                         CommandType.ADD_NOTE.getDescription(),
                         format("%s/%s", CommandType.ADD_NOTE.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_TRIP.getDescription(),
-                        format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.MY_TRIPS.getDescription(),
                         CommandType.MY_TRIPS.getName())
         );
@@ -115,7 +122,7 @@ public class NewTripCommand extends AbstractCommand {
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.NEW_TRIP;
+        return CommandType.EDIT_TRIP;
     }
 
     private enum State {

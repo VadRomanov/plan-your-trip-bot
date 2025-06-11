@@ -1,6 +1,7 @@
 package com.planyourtrip.bot.service.command.impl;
 
 import com.planyourtrip.bot.constant.BotAnswer;
+import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.service.command.registry.Command;
 import com.planyourtrip.bot.service.command.registry.CommandProcessorRegistry;
 import com.planyourtrip.bot.service.dto.AbstractRequestDto;
@@ -37,12 +38,17 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public final ResponseDto process(AbstractRequestDto requestDto) {
-        return switch (requestDto) {
-            case CommandDto commandDto -> processCommand(commandDto);
-            case CallbackDto callbackDto -> processCallback(callbackDto);
-            case MessageDto messageDto -> processMessage(messageDto);
-            default -> throw new IllegalStateException("Unexpected value: " + requestDto);
-        };
+        try {
+            return switch (requestDto) {
+                case CommandDto commandDto -> processCommand(commandDto);
+                case CallbackDto callbackDto -> processCallback(callbackDto);
+                case MessageDto messageDto -> processMessage(messageDto);
+                default -> throw new IllegalStateException("Unexpected value: " + requestDto);
+            };
+        } catch (BusinessException e) {
+            log.error("Error while process message command {}", requestDto.getCommandType().getName(), e);
+            return returnWarningMessage(e.getMessage());
+        }
     }
 
     @Override

@@ -2,8 +2,10 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
+import com.planyourtrip.bot.dto.TicketDto;
 import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.ticket.TicketService;
 import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
@@ -25,6 +27,7 @@ import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_INIT_RESPONSE;
 @RequiredArgsConstructor
 public class MyTripsCommand extends AbstractCommand {
     private final TripServiceImpl tripService;
+    private final TicketService ticketService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -39,8 +42,21 @@ public class MyTripsCommand extends AbstractCommand {
         } else if (step == 2) {
             var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
             var trip = tripService.getTripById(tripId);
+            var tickets = ticketService.getTicketsByTripId(tripId);
             return ResponseDto.builder()
-                    .text(String.format("%s%s", trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY))
+                    .text(String.format("""
+                                    <b>%s%s</b>
+                                    Даты: %s - %s
+                                    Билеты: %s
+                                    Отели: %s
+                                    Заметки: %s
+                                    """, trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY,
+                            trip.getStartDate(), trip.getEndDate(),
+                            String.join(",",
+                                    tickets.stream()
+                                            .map(TicketDto::toString)
+                                            .toList()),
+                            Strings.EMPTY, Strings.EMPTY))
                     .keyboard(getActionsKeyboard(tripId))
                     .build();
         } else {

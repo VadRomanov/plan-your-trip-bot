@@ -6,7 +6,7 @@ server:
   port: 8081
 
 core-service:
-  port: ${CORE_PORT:8080}
+  port: ${CORE_PORT:8180}
   rest-base-url: ${CORE_URL:http://localhost}:${core-service.port}
 
 info:
@@ -24,4 +24,8 @@ http:
     pool:
       max-total: 100
       default-max-per-route: 150
-    feignLoggerLevel: ${FEIGN_LOGGING_LEVEL:FULL}
+    feignLoggerLevel: ${FEIGN_LOGGING_LEVEL:BASIC}
+
+logging:
+  level:
+    com.planyourtrip.bot.service.core: ${FEIGN_LOGGING_LEVEL:debug}

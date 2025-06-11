@@ -49,6 +49,8 @@ public class EventHandler {
                     new ReplyKeyboardHistory.State()
                             .setKeyboard(responseDto.getKeyboard())
                             .setText(responseDto.getText()));
+        } else {
+            replyKeyboardHistory.clear(responseDto.getChatId());
         }
         return responseDto;
     }

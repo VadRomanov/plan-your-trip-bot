@@ -20,4 +20,9 @@ public class TicketDto {
     private LocalDateTime arrivalTime;
     private String fileUrl;
     private OffsetDateTime createdAt;
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s - %s %s", type, departure, departureTime, arrival, arrivalTime);
+    }
 }

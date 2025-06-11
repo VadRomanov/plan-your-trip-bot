@@ -32,6 +32,20 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildButtons(Collection<String> names,
+                                                                         CommandType commandType,
+                                                                         long id) {
+        List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
+        for (var name : names) {
+            var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
+                    name,
+                    String.format("%s/%s/%s", commandType.getName(), id, name)
+            );
+            buttons.add(newTripButton);
+        }
+        return buttons;
+    }
+
     public static ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons) {
         return buildInlineKeyboard(buttons, DEFAULT_BUTTON_PER_ROW_COUNT);
     }
