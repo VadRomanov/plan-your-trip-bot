@@ -2,7 +2,6 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.dto.CallbackDto;
@@ -47,16 +46,11 @@ public class EditTripCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
-        try {
-            return switch (State.valueOf(messageDto.getState().getState())) {
-                case AWAIT_NAME -> processNameResponse(messageDto);
-                case AWAIT_START_DT -> processStartDtResponse(messageDto);
-                case AWAIT_END_DT -> processEndDtResponse(messageDto);
-            };
-        } catch (BusinessException e) {
-            log.error("Error while process message command {}", CommandType.NEW_TRIP.getName(), e);
-            return returnWarningMessage(e.getMessage());
-        }
+        return switch (State.valueOf(messageDto.getState().getState())) {
+            case AWAIT_NAME -> processNameResponse(messageDto);
+            case AWAIT_START_DT -> processStartDtResponse(messageDto);
+            case AWAIT_END_DT -> processEndDtResponse(messageDto);
+        };
     }
 
     private ResponseDto processInitResponse(long chatId) {

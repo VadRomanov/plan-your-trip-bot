@@ -3,7 +3,6 @@ package com.planyourtrip.bot.service.command.ticket;
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.TicketType;
-import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.trip.TripService;
 import com.planyourtrip.bot.service.dto.CallbackDto;
@@ -42,19 +41,14 @@ public class AddTicketCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
-        try {
-            return switch (State.valueOf(messageDto.getState().getState())) {
-                case AWAIT_TRIP_ID, AWAIT_TYPE -> null;
-                case AWAIT_DEPARTURE -> processDepartureResponse(messageDto);
-                case AWAIT_DEPARTURE_DT -> processDepartureDtResponse(messageDto);
-                case AWAIT_ARRIVAL -> processArrivalResponse(messageDto);
-                case AWAIT_ARRIVAL_DT -> processArrivalDtResponse(messageDto);
-                case AWAIT_FILE -> processFileResponse(messageDto);
-            };
-        } catch (BusinessException e) {
-            log.error("Error while process message command {}", CommandType.ADD_TICKET.getName(), e);
-            return returnWarningMessage(e.getMessage());
-        }
+        return switch (State.valueOf(messageDto.getState().getState())) {
+            case AWAIT_DEPARTURE -> processDepartureResponse(messageDto);
+            case AWAIT_DEPARTURE_DT -> processDepartureDtResponse(messageDto);
+            case AWAIT_ARRIVAL -> processArrivalResponse(messageDto);
+            case AWAIT_ARRIVAL_DT -> processArrivalDtResponse(messageDto);
+            case AWAIT_FILE -> processFileResponse(messageDto);
+            case AWAIT_TRIP_ID, AWAIT_TYPE -> null;
+        };
     }
 
     private ResponseDto processCommandResponse(CommandDto commandDto) {
