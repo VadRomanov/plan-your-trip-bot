@@ -2,8 +2,10 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
+import com.planyourtrip.bot.dto.HotelDto;
 import com.planyourtrip.bot.dto.TicketDto;
 import com.planyourtrip.bot.dto.TripDto;
+import com.planyourtrip.bot.service.command.hotel.HotelService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.ticket.TicketService;
 import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
@@ -28,6 +30,7 @@ import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_INIT_RESPONSE;
 public class MyTripsCommand extends AbstractCommand {
     private final TripServiceImpl tripService;
     private final TicketService ticketService;
+    private final HotelService hotelService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -43,6 +46,7 @@ public class MyTripsCommand extends AbstractCommand {
             var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
             var trip = tripService.getTripById(tripId);
             var tickets = ticketService.getTicketsByTripId(tripId);
+            var hotels = hotelService.getHotelsByTripId(tripId);
             return ResponseDto.builder()
                     .text(String.format("""
                                     <b>%s%s</b>
@@ -56,7 +60,11 @@ public class MyTripsCommand extends AbstractCommand {
                                     tickets.stream()
                                             .map(TicketDto::toString)
                                             .toList()),
-                            Strings.EMPTY, Strings.EMPTY))
+                            String.join(",",
+                                    hotels.stream()
+                                            .map(HotelDto::toString)
+                                            .toList()),
+                            Strings.EMPTY))
                     .keyboard(getActionsKeyboard(tripId))
                     .build();
         } else {

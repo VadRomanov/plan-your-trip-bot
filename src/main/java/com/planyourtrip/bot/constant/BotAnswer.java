@@ -30,6 +30,15 @@ public class BotAnswer {
     public static final String ADD_TICKET_FILE_RESPONSE = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
 
+    public static final String ADD_HOTEL_COMMAND_RESPONSE = "Выберите поездку, к которой хотели бы добавить билет";
+    public static final String ADD_HOTEL_INIT_RESPONSE = "Выберите тип размещения";
+    public static final String ADD_HOTEL_NAME_RESPONSE = "Введите название";
+    public static final String ADD_HOTEL_ADDRESS_RESPONSE = "Введите адрес";
+    public static final String ADD_HOTEL_CHECK_IN_RESPONSE = "Введите дату заселения в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_HOTEL_CHECK_OUT_RESPONSE = "Введите дату выезда в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_HOTEL_FILE_RESPONSE = "Добавьте подтверждение бронирования";
+    public static final String ADD_HOTEL_FINAL_RESPONSE = "Размещение добавлено!✅";
+
     public static final String EXPIRED = " (Завершено)";
     public static final String CONFIRMED = "ДА";
     public static final String CANCEL = "<< Назад";
