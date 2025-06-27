@@ -136,11 +136,11 @@ public class AddHotelCommand extends AbstractCommand {
 
     private ResponseDto processFileResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var trip = hotelService.commitNewHotel(chatId);
+        var hotel = hotelService.commitNewHotel(chatId);
         getUserStateManager().clearState(chatId);
         return ResponseDto.builder()
                 .text(format(BotAnswer.ADD_HOTEL_FINAL_RESPONSE))
-                .keyboard(getFinalKeyboard(trip.getId()))
+                .keyboard(getFinalKeyboard(hotel.getTripId()))
                 .build();
     }
 

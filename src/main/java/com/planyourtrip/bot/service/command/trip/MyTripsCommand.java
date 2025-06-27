@@ -3,10 +3,12 @@ package com.planyourtrip.bot.service.command.trip;
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.HotelDto;
+import com.planyourtrip.bot.dto.NoteDto;
 import com.planyourtrip.bot.dto.TicketDto;
 import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.hotel.HotelService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.note.NoteService;
 import com.planyourtrip.bot.service.command.ticket.TicketService;
 import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
@@ -31,6 +33,7 @@ public class MyTripsCommand extends AbstractCommand {
     private final TripServiceImpl tripService;
     private final TicketService ticketService;
     private final HotelService hotelService;
+    private final NoteService noteService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -47,6 +50,7 @@ public class MyTripsCommand extends AbstractCommand {
             var trip = tripService.getTripById(tripId);
             var tickets = ticketService.getTicketsByTripId(tripId);
             var hotels = hotelService.getHotelsByTripId(tripId);
+            var notes = noteService.getNotesByTripId(tripId);
             return ResponseDto.builder()
                     .text(String.format("""
                                     <b>%s%s</b>
@@ -64,7 +68,10 @@ public class MyTripsCommand extends AbstractCommand {
                                     hotels.stream()
                                             .map(HotelDto::toString)
                                             .toList()),
-                            Strings.EMPTY))
+                            String.join(",",
+                                    notes.stream()
+                                            .map(NoteDto::toString)
+                                            .toList())))
                     .keyboard(getActionsKeyboard(tripId))
                     .build();
         } else {

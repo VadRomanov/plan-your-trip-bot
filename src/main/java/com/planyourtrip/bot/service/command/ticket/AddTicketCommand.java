@@ -137,11 +137,11 @@ public class AddTicketCommand extends AbstractCommand {
 
     private ResponseDto processFileResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var trip = ticketService.commitNewTicket(chatId);
+        var ticket = ticketService.commitNewTicket(chatId);
         getUserStateManager().clearState(chatId);
         return ResponseDto.builder()
                 .text(format(BotAnswer.ADD_TICKET_FINAL_RESPONSE))
-                .keyboard(getFinalKeyboard(trip.getId()))
+                .keyboard(getFinalKeyboard(ticket.getTripId()))
                 .build();
     }
 
