@@ -26,9 +26,9 @@ public class HotelServiceImpl implements HotelService {
     private static final Map<Long, HotelDto> HOTEL_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
-    public void createHotel(String type, long tripId, long chatId) {
-        log.debug("Create hotel {}, chatId {}", type, chatId);
-        HOTEL_DTO_CHAT_CONTAINER.put(chatId, new HotelDto(tripId).setType(AccommodationType.valueOf(type)));
+    public void createHotel(int code, long tripId, long chatId) {
+        log.debug("Create hotel, chatId {}", chatId);
+        HOTEL_DTO_CHAT_CONTAINER.put(chatId, new HotelDto(tripId).setType(AccommodationType.findByCode(code)));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.planyourtrip.bot.utils;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
+import com.planyourtrip.bot.dto.AbstractType;
 import com.planyourtrip.bot.dto.TripDto;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
@@ -32,14 +33,14 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildButtons(Collection<String> names,
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildButtons(List<? extends AbstractType> types,
                                                                          CommandType commandType,
                                                                          long id) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
-        for (var name : names) {
+        for (var type : types) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
-                    name,
-                    String.format("%s/%s/%s", commandType.getName(), id, name)
+                    type.getName(),
+                    String.format("%s/%s/%s", commandType.getName(), id, type.getCode())
             );
             buttons.add(newTripButton);
         }

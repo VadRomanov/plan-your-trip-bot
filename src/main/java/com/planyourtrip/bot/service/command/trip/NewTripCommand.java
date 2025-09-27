@@ -8,7 +8,6 @@ import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
-import com.planyourtrip.bot.service.mapper.Mapper;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
@@ -28,7 +27,6 @@ public class NewTripCommand extends AbstractCommand {
 
     private final TripService tripService;
     private final UserService userService;
-    private final Mapper mapper;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -58,7 +56,7 @@ public class NewTripCommand extends AbstractCommand {
     }
 
     private ResponseDto processNameResponse(MessageDto messageDto) {
-        var user = userService.createOrUpdateUser(mapper.messageToUserDto(messageDto));
+        var user = userService.getUserByTelegramId(messageDto.getTelegramId());
         long chatId = messageDto.getChatId();
         tripService.createTrip(messageDto.getMsgText(), user.getId(), chatId);
         getUserStateManager().setState(chatId, new UserState()

@@ -2,6 +2,7 @@ package com.planyourtrip.bot.service.command.impl;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.exception.BusinessException;
+import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.command.registry.Command;
 import com.planyourtrip.bot.service.command.registry.CommandProcessorRegistry;
 import com.planyourtrip.bot.service.dto.AbstractRequestDto;
@@ -9,6 +10,7 @@ import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.service.mapper.Mapper;
 import com.planyourtrip.bot.service.state.callback.ReplyKeyboardHistory;
 import com.planyourtrip.bot.service.state.impl.UserStateManagerImpl;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
@@ -20,6 +22,7 @@ import java.util.List;
 import static com.planyourtrip.bot.constant.CommandType.HELP;
 import static com.planyourtrip.bot.constant.CommandType.MY_TRIPS;
 import static com.planyourtrip.bot.constant.CommandType.NEW_TRIP;
+import static java.util.Objects.isNull;
 
 @Slf4j
 public abstract class AbstractCommand implements Command {
@@ -30,6 +33,10 @@ public abstract class AbstractCommand implements Command {
     private UserStateManagerImpl userStateManager;
     @Autowired
     private ReplyKeyboardHistory replyKeyboardHistory;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private Mapper mapper;
 
     @Override
     public void afterPropertiesSet() {
@@ -39,6 +46,10 @@ public abstract class AbstractCommand implements Command {
     @Override
     public final ResponseDto process(AbstractRequestDto requestDto) {
         try {
+            var user = userService.getUserByTelegramId(requestDto.getTelegramId());
+            if (isNull(user)) {
+                userService.createOrUpdateUser(mapper.requestToUserDto(requestDto));
+            }
             return switch (requestDto) {
                 case CommandDto commandDto -> processCommand(commandDto);
                 case CallbackDto callbackDto -> processCallback(callbackDto);

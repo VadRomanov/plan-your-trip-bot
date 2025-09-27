@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -28,9 +30,10 @@ public class DateTimeUtils {
         }
     }
 
-    public static LocalDateTime parseDatetime(String value) {
+    public static OffsetDateTime parseDatetime(String value) {
         try {
-            return LocalDateTime.parse(value, DATE_TIME_FORMAT);
+            var localDateTime = LocalDateTime.parse(value, DATE_TIME_FORMAT);
+            return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
         } catch (DateTimeParseException e) {
             log.error("Error wile parsing datetime {}", e.getMessage(), e);
             throw BusinessException.builder(ResponseCode.INVALID_DATE_FORMATE)

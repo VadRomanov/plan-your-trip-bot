@@ -53,7 +53,7 @@ public class BotProcessorImpl implements BotProcessor {
         if (message.isCommand()) {
             userStateManager.clearState(message.getChatId());
             return eventHandler.handleEvent(telegramMapper.toCommandDto(message));
-        } else if (message.hasText()) {
+        } else if (message.hasText() || message.hasDocument()) {
             var state = userStateManager.getState(message.getChatId());
             if (nonNull(state)) {
                 return eventHandler.handleEvent(telegramMapper.toResponseMessageDto(message, state));

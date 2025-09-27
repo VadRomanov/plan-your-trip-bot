@@ -78,8 +78,8 @@ public class AddHotelCommand extends AbstractCommand {
     private ResponseDto processTypeResponse(CallbackDto callbackDto) {
         long chatId = callbackDto.getChatId();
         var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
-        var accommodationType = callbackDto.getCallbackData()[2];
-        hotelService.createHotel(accommodationType, tripId, chatId);
+        var accommodationCode = Integer.parseInt(callbackDto.getCallbackData()[2]);
+        hotelService.createHotel(accommodationCode, tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_HOTEL)
                 .setState(State.AWAIT_NAME.name()));
@@ -166,7 +166,7 @@ public class AddHotelCommand extends AbstractCommand {
 
     private List<ReplyKeyboardBuilder.KeyboardButton> getAccommodationTypesKeyboard(long tripId) {
         return ReplyKeyboardBuilder.buildButtons(
-                Arrays.stream(AccommodationType.values()).map(AccommodationType::name).toList(),
+                Arrays.stream(AccommodationType.values()).toList(),
                 CommandType.ADD_HOTEL,
                 tripId);
     }

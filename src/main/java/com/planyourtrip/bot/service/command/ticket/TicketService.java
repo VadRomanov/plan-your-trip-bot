@@ -2,20 +2,22 @@ package com.planyourtrip.bot.service.command.ticket;
 
 import com.planyourtrip.bot.dto.TicketDto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 
 public interface TicketService {
 
-    void createTicket(String type, long tripId, long chatId);
+    void createTicket(int code, long tripId, long chatId);
 
     void setDeparture(String departure, long chatId);
 
     void setArrival(String arrival, long chatId);
 
-    void setDepartureDt(LocalDateTime departureDt, long chatId);
+    void setDepartureDt(OffsetDateTime departureDt, long chatId);
 
-    void setArrivalDt(LocalDateTime arrivalDt, long chatId);
+    void setArrivalDt(OffsetDateTime arrivalDt, long chatId);
+
+    void setFileId(String fileId, long chatId);
 
     Collection<TicketDto> getTicketsByTripId(long tripId);
 

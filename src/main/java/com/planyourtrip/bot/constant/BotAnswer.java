@@ -19,14 +19,16 @@ public class BotAnswer {
 
     public static final String EDIT_TRIP_RESPONSE = "Выберите действие";
 
+    public static final String MY_TICKETS_INIT_RESPONSE = "Выберите путешествие, которое Вас интересует:";
+    public static final String MY_TICKETS_EMPTY_RESPONSE = "У Вас пока что нет билетов для этой поездки";
     public static final String ADD_TICKET_COMMAND_RESPONSE = "Выберите поездку, к которой хотели бы добавить билет";
     public static final String ADD_TICKET_INIT_RESPONSE = "Выберите тип билета";
     public static final String ADD_TICKET_DEPARTURE_RESPONSE = "Введите место отправления";
     public static final String ADD_TICKET_DEPARTURE_DT_RESPONSE =
-            "Введите время отправления в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
+            "Введите дату и время отправления в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
     public static final String ADD_TICKET_ARRIVAL_RESPONSE = "Введите место назначения";
     public static final String ADD_TICKET_ARRIVAL_DT_RESPONSE =
-            "Введите время прибытия в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
+            "Введите дату и время прибытия в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
     public static final String ADD_TICKET_FILE_RESPONSE = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
 
@@ -44,8 +46,9 @@ public class BotAnswer {
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
 
     public static final String EXPIRED = " (Завершено)";
-    public static final String CONFIRMED = "ДА";
+    public static final String CONFIRMED = "Да";
     public static final String CANCEL = "<< Назад";
+    public static final String SKIP = "Пропустить";
 
     public static final String HELP_ANSWER = String.format("""
                     Я помогу тебе создать и управлять твоими путешествиями ✈️.
@@ -56,10 +59,6 @@ public class BotAnswer {
             CommandType.NEW_TRIP.getName(), CommandType.MY_TRIPS.getName(), CommandType.DELETE_TRIP.getName());
     public static final String START_ANSWER = """
             \uD83C\uDF0D Добро пожаловать, %s!
-            Я помогу тебе планировать путешествия.
-            Нажимай на кнопку под этим сообщением, чтоб выбрать следующее действие""";
-    public static final String RESTART_ANSWER = """
-            \uD83C\uDF0D C возвращением, %s!
             Я помогу тебе планировать путешествия.
             Нажимай на кнопку под этим сообщением, чтоб выбрать следующее действие""";
     public static final String DEFAULT_ANSWER = """

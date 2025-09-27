@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,9 +26,9 @@ public class TicketServiceImpl implements TicketService {
     private static final Map<Long, TicketDto> TICKET_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
-    public void createTicket(String type, long tripId, long chatId) {
+    public void createTicket(int type, long tripId, long chatId) {
         log.debug("Create ticket {}, chatId {}", type, chatId);
-        TICKET_DTO_CHAT_CONTAINER.put(chatId, new TicketDto(tripId).setType(TicketType.valueOf(type)));
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, new TicketDto(tripId).setType(TicketType.findByCode(type)));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void setDepartureDt(LocalDateTime departureDt, long chatId) {
+    public void setDepartureDt(OffsetDateTime departureDt, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket departure datetime {}, chatId {}", departureDt, chatId);
         if (nonNull(ticket.getArrivalTime()) && ticket.getArrivalTime().isBefore(departureDt)) {
@@ -60,7 +60,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void setArrivalDt(LocalDateTime arrivalDt, long chatId) {
+    public void setArrivalDt(OffsetDateTime arrivalDt, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket arrival datetime {}, chatId {}", arrivalDt, chatId);
         if (nonNull(ticket.getDepartureTime()) && ticket.getDepartureTime().isAfter(arrivalDt)) {
@@ -68,6 +68,14 @@ public class TicketServiceImpl implements TicketService {
                     .build();
         }
         ticket.setArrivalTime(arrivalDt);
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
+    }
+
+    @Override
+    public void setFileId(String fileId, long chatId) {
+        var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        log.debug("Set file_id {}, chatId {}", fileId, chatId);
+        ticket.setFileUrl(fileId);
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 

@@ -24,6 +24,7 @@ public class TelegramMapper {
                 .chatId(message.getChatId())
                 .userName(message.getFrom().getUserName())
                 .msgText(message.getText().trim())
+                .document(message.getDocument())
                 .state(state)
                 .messageId(message.getMessageId())
                 .firstName(message.getFrom().getFirstName())

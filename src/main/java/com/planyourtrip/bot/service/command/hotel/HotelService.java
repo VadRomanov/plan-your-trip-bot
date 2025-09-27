@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface HotelService {
 
-    void createHotel(String type, long tripId, long chatId);
+    void createHotel(int code, long tripId, long chatId);
 
     void setName(String name, long chatId);
 

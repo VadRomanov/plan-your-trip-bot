@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
@@ -79,8 +80,8 @@ public class AddTicketCommand extends AbstractCommand {
     private ResponseDto processTypeResponse(CallbackDto callbackDto) {
         long chatId = callbackDto.getChatId();
         var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
-        var ticketType = callbackDto.getCallbackData()[2];
-        ticketService.createTicket(ticketType, tripId, chatId);
+        var ticketCode = Integer.parseInt(callbackDto.getCallbackData()[2]);
+        ticketService.createTicket(ticketCode, tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_TICKET)
                 .setState(State.AWAIT_DEPARTURE.name()));
@@ -132,11 +133,15 @@ public class AddTicketCommand extends AbstractCommand {
                 .setState(State.AWAIT_FILE.name()));
         return ResponseDto.builder()
                 .text(format(BotAnswer.ADD_TICKET_FILE_RESPONSE))
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP, CommandType.ADD_TICKET.getName())))
                 .build();
     }
 
     private ResponseDto processFileResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
+        if (nonNull(messageDto.getDocument().getFileId())) {
+            ticketService.setFileId(messageDto.getDocument().getFileId(), chatId);
+        }
         var ticket = ticketService.commitNewTicket(chatId);
         getUserStateManager().clearState(chatId);
         return ResponseDto.builder()
@@ -167,7 +172,7 @@ public class AddTicketCommand extends AbstractCommand {
 
     private List<ReplyKeyboardBuilder.KeyboardButton> getTickerTypesKeyboard(long tripId) {
         return ReplyKeyboardBuilder.buildButtons(
-                Arrays.stream(TicketType.values()).map(TicketType::name).toList(),
+                Arrays.stream(TicketType.values()).toList(),
                 CommandType.ADD_TICKET,
                 tripId);
     }
