@@ -42,7 +42,9 @@ public class BotAnswer {
     public static final String ADD_HOTEL_FILE_RESPONSE = "Добавьте подтверждение бронирования";
     public static final String ADD_HOTEL_FINAL_RESPONSE = "Размещение добавлено!✅";
 
+    public static final String MY_NOTES_EMPTY_RESPONSE = "У Вас пока что нет заметок для этой поездки";
     public static final String ADD_NOTE_COMMAND_RESPONSE = "Выберите поездку, к которой хотели бы добавить заметку";
+    public static final String ADD_NOTE_TITLE_RESPONSE = "Введите заголовок заметки";
     public static final String ADD_NOTE_CONTENT_RESPONSE = "Введите заметку";
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
 

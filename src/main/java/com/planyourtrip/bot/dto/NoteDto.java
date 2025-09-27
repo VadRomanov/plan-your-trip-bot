@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Data
 @Accessors(chain = true)
@@ -17,10 +18,11 @@ public class NoteDto {
     private Long tripId;
     @NonNull
     private String content;
+    private String title;
     private OffsetDateTime createdAt;
 
     @Override
     public String toString() {
-        return Strings.left(content, 20);
+        return Objects.requireNonNullElse(title, Strings.left(content, 20));
     }
 }

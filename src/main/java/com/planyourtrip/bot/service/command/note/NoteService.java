@@ -8,6 +8,8 @@ public interface NoteService {
 
     void createNote(long tripId, long chatId);
 
+    void setTitle(String title, long chatId);
+
     void setContent(String content, long chatId);
 
     Collection<NoteDto> getNotesByTripId(long tripId);

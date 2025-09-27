@@ -5,6 +5,7 @@ import com.planyourtrip.bot.service.command.note.NoteService;
 import com.planyourtrip.bot.service.core.NoteCoreClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -26,9 +27,17 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    public void setTitle(String title, long chatId) {
+        var hotelBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
+        log.debug("Set note title {}, chatId {}", title, chatId);
+        hotelBuilder.title(title);
+        NOTE_DTO_CHAT_CONTAINER.put(chatId, hotelBuilder);
+    }
+
+    @Override
     public void setContent(String content, long chatId) {
         var hotelBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
-        log.debug("Set note content {}, chatId {}", content, chatId);
+        log.debug("Set note content {}, chatId {}", Strings.left(content, 20), chatId);
         hotelBuilder.content(content);
         NOTE_DTO_CHAT_CONTAINER.put(chatId, hotelBuilder);
     }

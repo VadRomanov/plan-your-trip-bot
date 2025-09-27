@@ -38,6 +38,7 @@ public class AddNoteCommand extends AbstractCommand {
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
         return switch (State.valueOf(messageDto.getState().getState())) {
+            case AWAIT_TITLE -> processTitleResponse(messageDto);
             case AWAIT_CONTENT -> processContentResponse(messageDto);
         };
     }
@@ -58,7 +59,18 @@ public class AddNoteCommand extends AbstractCommand {
         noteService.createNote(tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_NOTE)
-                .setState(State.AWAIT_CONTENT.name()));
+                .setState(State.AWAIT_TITLE.name()));
+        return ResponseDto.builder()
+                .text(BotAnswer.ADD_NOTE_TITLE_RESPONSE)
+                .build();
+    }
+
+    private ResponseDto processTitleResponse(MessageDto messageDto) {
+        long chatId = messageDto.getChatId();
+        noteService.setTitle(messageDto.getMsgText(), chatId);
+        getUserStateManager().setState(chatId, new UserState()
+                .setResponsibleCommand(CommandType.ADD_NOTE)
+                .setState(State.AWAIT_TITLE.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.ADD_NOTE_CONTENT_RESPONSE)
                 .build();
@@ -100,6 +112,6 @@ public class AddNoteCommand extends AbstractCommand {
     }
 
     private enum State {
-        AWAIT_CONTENT
+        AWAIT_TITLE, AWAIT_CONTENT
     }
 }
