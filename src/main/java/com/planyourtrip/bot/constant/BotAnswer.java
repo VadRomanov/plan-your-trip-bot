@@ -18,8 +18,8 @@ public class BotAnswer {
     public static final String DELETE_CONFIRMATION_BUTTON = "Подтвердить удаление";
 
     public static final String EDIT_TRIP_RESPONSE = "Выберите действие";
+    public static final String CHOOSE_TRIP_RESPONSE = "Выберите путешествие, которое Вас интересует:";
 
-    public static final String MY_TICKETS_INIT_RESPONSE = "Выберите путешествие, которое Вас интересует:";
     public static final String MY_TICKETS_EMPTY_RESPONSE = "У Вас пока что нет билетов для этой поездки";
     public static final String ADD_TICKET_COMMAND_RESPONSE = "Выберите поездку, к которой хотели бы добавить билет";
     public static final String ADD_TICKET_INIT_RESPONSE = "Выберите тип билета";
@@ -32,6 +32,7 @@ public class BotAnswer {
     public static final String ADD_TICKET_FILE_RESPONSE = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
 
+    public static final String MY_HOTELS_EMPTY_RESPONSE = "У Вас пока что нет отелей для этой поездки";
     public static final String ADD_HOTEL_COMMAND_RESPONSE = "Выберите поездку, к которой хотели бы добавить билет";
     public static final String ADD_HOTEL_INIT_RESPONSE = "Выберите тип размещения";
     public static final String ADD_HOTEL_NAME_RESPONSE = "Введите название";

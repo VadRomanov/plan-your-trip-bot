@@ -1,8 +1,8 @@
-package com.planyourtrip.bot.service.command.ticket;
+package com.planyourtrip.bot.service.command.hotel;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.TicketDto;
+import com.planyourtrip.bot.dto.HotelDto;
 import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
@@ -22,9 +22,9 @@ import static java.lang.String.format;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MyTicketsCommand extends AbstractCommand {
+public class MyHotelsCommand extends AbstractCommand {
     private final TripServiceImpl tripService;
-    private final TicketService ticketService;
+    private final HotelService hotelService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -54,44 +54,44 @@ public class MyTicketsCommand extends AbstractCommand {
     private List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard(long tripId) {
         return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_TICKET.getDescription(),
-                        String.format("%s/%s", CommandType.EDIT_TICKET.getName(), tripId)),
+                        CommandType.EDIT_HOTEL.getDescription(),
+                        String.format("%s/%s", CommandType.EDIT_HOTEL.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.DELETE_TICKET.getDescription(),
-                        String.format("%s/%s", CommandType.DELETE_TICKET.getName(), tripId))
+                        CommandType.DELETE_HOTEL.getDescription(),
+                        String.format("%s/%s", CommandType.DELETE_HOTEL.getName(), tripId))
         );
     }
 
     private ResponseDto prepareAnswer(long tripId) {
-        var tickets = ticketService.getTicketsByTripId(tripId);
-        if (tickets.isEmpty()) {
+        var hotels = hotelService.getHotelsByTripId(tripId);
+        if (hotels.isEmpty()) {
             return ResponseDto.builder()
-                    .text(BotAnswer.MY_TICKETS_EMPTY_RESPONSE)
-                    .keyboard(getAddTicketKeyboard(tripId))
+                    .text(BotAnswer.MY_HOTELS_EMPTY_RESPONSE)
+                    .keyboard(getAddHotelKeyboard(tripId))
                     .build();
         }
         return ResponseDto.builder()
                 .text(String.format("""
-                                <b>Список билетов:
+                                <b>Список отелей:
                                 %s</b>
                                 """,
                         String.join(",",
-                                tickets.stream()
-                                        .map(TicketDto::toString)
+                                hotels.stream()
+                                        .map(HotelDto::toString)
                                         .toList())))
                 .keyboard(getActionsKeyboard(tripId))
                 .build();
     }
 
     private List<ReplyKeyboardBuilder.KeyboardButton> getTripsKeyboard(Collection<TripDto> trips) {
-        return ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TICKETS);
+        return ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_HOTELS);
     }
 
-    private List<ReplyKeyboardBuilder.KeyboardButton> getAddTicketKeyboard(long tripId) {
+    private List<ReplyKeyboardBuilder.KeyboardButton> getAddHotelKeyboard(long tripId) {
         return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_TICKET.getDescription(),
-                        format("%s/%s", CommandType.ADD_TICKET.getName(), tripId))
+                        CommandType.ADD_HOTEL.getDescription(),
+                        format("%s/%s", CommandType.ADD_HOTEL.getName(), tripId))
         );
     }
 
@@ -105,6 +105,6 @@ public class MyTicketsCommand extends AbstractCommand {
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.MY_TICKETS;
+        return CommandType.MY_HOTELS;
     }
 }
