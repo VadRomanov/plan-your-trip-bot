@@ -89,6 +89,12 @@ public class ReplyKeyboardBuilder {
         return keyboard;
     }
 
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildNewEntityButton(CommandType newEntityType) {
+        return List.of(new ReplyKeyboardBuilder.KeyboardButton(
+                newEntityType.getDescription(),
+                newEntityType.getName())
+        );
+    }
 
     public record KeyboardButton(String text, String callbackData) {
     }

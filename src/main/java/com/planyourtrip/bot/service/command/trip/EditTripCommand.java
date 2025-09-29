@@ -37,7 +37,7 @@ public class EditTripCommand extends AbstractCommand {
     public ResponseDto processCallback(CallbackDto callbackDto) {
         var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
         return ResponseDto.builder()
-                .text(BotAnswer.EDIT_TRIP_RESPONSE)
+                .text(BotAnswer.CHOOSE_EDIT_RESPONSE)
                 .keyboard(getFinalKeyboard(tripId))
                 .build();
     }

@@ -5,7 +5,6 @@ import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.HotelDto;
 import com.planyourtrip.bot.dto.NoteDto;
 import com.planyourtrip.bot.dto.TicketDto;
-import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.hotel.HotelService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.note.NoteService;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_EMPTY_RESPONSE;
@@ -83,7 +81,9 @@ public class MyTripsCommand extends AbstractCommand {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_INIT_RESPONSE)
-                .keyboard(trips.isEmpty() ? getNewTripKeyboard() : getTripsKeyboard(trips))
+                .keyboard(trips.isEmpty()
+                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
+                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TRIPS))
                 .build();
     }
 
@@ -95,18 +95,6 @@ public class MyTripsCommand extends AbstractCommand {
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.DELETE_TRIP.getDescription(),
                         String.format("%s/%s", CommandType.DELETE_TRIP.getName(), tripId))
-        );
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getTripsKeyboard(Collection<TripDto> trips) {
-        return ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TRIPS);
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getNewTripKeyboard() {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.NEW_TRIP.getDescription(),
-                        CommandType.NEW_TRIP.getName())
         );
     }
 

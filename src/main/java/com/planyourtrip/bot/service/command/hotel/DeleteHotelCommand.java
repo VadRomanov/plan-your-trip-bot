@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.service.command.trip;
+package com.planyourtrip.bot.service.command.hotel;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
@@ -10,7 +10,6 @@ import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,8 +17,9 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DeleteTripCommand extends AbstractCommand {
+public class DeleteHotelCommand extends AbstractCommand {
     private final TripServiceImpl tripService;
+    private final HotelService hotelService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -32,7 +32,7 @@ public class DeleteTripCommand extends AbstractCommand {
         if (step == 1) {
             return processInitResponse(callbackDto.getTelegramId());
         } else if (step == 2) {
-            return requestConfirmation(callbackDto);
+            return requestConfirmation(Long.parseLong(callbackDto.getCallbackData()[1]));
         } else if (step == 3) {
             return processConfirmation(callbackDto);
         } else {
@@ -43,22 +43,22 @@ public class DeleteTripCommand extends AbstractCommand {
     private ResponseDto processInitResponse(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_TRIP_INIT_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_HOTEL_INIT_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_TRIP))
+                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_HOTEL))
                 .build();
     }
 
-    private ResponseDto requestConfirmation(CallbackDto callbackDto) {
-        var trip = tripService.getTripById(Long.parseLong(callbackDto.getCallbackData()[1]));
+    private ResponseDto requestConfirmation(long hotelId) {
+        var hotel = hotelService.getHotelById(hotelId);
         return ResponseDto.builder()
-                .text(String.format(BotAnswer.DELETE_TRIP_CONFIRMATION_REQUEST, trip.getName(),
-                        trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY))
+                .text(String.format(BotAnswer.DELETE_HOTEL_CONFIRMATION_REQUEST,
+                        hotel.getName(), hotel.getCheckInDate(), hotel.getCheckOutDate()))
                 .keyboard(List.of(
                         new ReplyKeyboardBuilder.KeyboardButton(
                                 BotAnswer.DELETE_CONFIRMATION_BUTTON,
-                                String.format("%s/%s/%s", CommandType.DELETE_TRIP.getName(), trip.getId(),
+                                String.format("%s/%s/%s", CommandType.DELETE_HOTEL.getName(), hotel.getId(),
                                         BotAnswer.CONFIRMED)),
                         new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.CANCEL, CommandType.CANCEL.getName())))
                 .build();
@@ -68,7 +68,7 @@ public class DeleteTripCommand extends AbstractCommand {
         if (callbackDto.getCallbackData()[2].equals(BotAnswer.CONFIRMED)) {
             return doDelete(callbackDto);
         } else {
-            return processInitResponse(callbackDto.getTelegramId());
+            return returnErrorMessage();
         }
     }
 
@@ -81,6 +81,6 @@ public class DeleteTripCommand extends AbstractCommand {
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.DELETE_TRIP;
+        return CommandType.DELETE_HOTEL;
     }
 }

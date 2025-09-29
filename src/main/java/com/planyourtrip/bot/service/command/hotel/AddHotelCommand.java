@@ -55,7 +55,7 @@ public class AddHotelCommand extends AbstractCommand {
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.ADD_HOTEL_COMMAND_RESPONSE)
                 .keyboard(trips.isEmpty()
-                        ? getNewTripKeyboard()
+                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.ADD_HOTEL))
                 .build();
     }
@@ -153,14 +153,6 @@ public class AddHotelCommand extends AbstractCommand {
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.MY_TRIPS.getDescription(),
                         CommandType.MY_TRIPS.getName())
-        );
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getNewTripKeyboard() {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.NEW_TRIP.getDescription(),
-                        CommandType.NEW_TRIP.getName())
         );
     }
 

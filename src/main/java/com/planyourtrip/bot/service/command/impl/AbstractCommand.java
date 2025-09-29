@@ -11,8 +11,8 @@ import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.service.mapper.Mapper;
+import com.planyourtrip.bot.service.state.UserStateManager;
 import com.planyourtrip.bot.service.state.callback.ReplyKeyboardHistory;
-import com.planyourtrip.bot.service.state.impl.UserStateManagerImpl;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public abstract class AbstractCommand implements Command {
     @Autowired
     private CommandProcessorRegistry commandProcessorRegistry;
     @Autowired
-    private UserStateManagerImpl userStateManager;
+    private UserStateManager userStateManager;
     @Autowired
     private ReplyKeyboardHistory replyKeyboardHistory;
     @Autowired
@@ -72,24 +72,20 @@ public abstract class AbstractCommand implements Command {
         return null;
     }
 
-    protected ResponseDto returnErrorMessage() {
-        return returnErrorMessage(BotAnswer.DEFAULT_ANSWER);
-    }
-
     protected ResponseDto returnWarningMessage(String message) {
         return ResponseDto.builder()
                 .text(message)
                 .build();
     }
 
-    protected ResponseDto returnErrorMessage(String message) {
+    protected ResponseDto returnErrorMessage() {
         return ResponseDto.builder()
-                .text(message)
+                .text(BotAnswer.DEFAULT_ANSWER)
                 .keyboard(defaultKeyboard())
                 .build();
     }
 
-    protected UserStateManagerImpl getUserStateManager() {
+    protected UserStateManager getUserStateManager() {
         return userStateManager;
     }
 

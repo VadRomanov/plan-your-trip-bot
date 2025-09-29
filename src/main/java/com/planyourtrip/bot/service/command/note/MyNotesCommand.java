@@ -3,7 +3,6 @@ package com.planyourtrip.bot.service.command.note;
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.NoteDto;
-import com.planyourtrip.bot.dto.TripDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -47,7 +45,9 @@ public class MyNotesCommand extends AbstractCommand {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_RESPONSE)
-                .keyboard(trips.isEmpty() ? getNewTripKeyboard() : getTripsKeyboard(trips))
+                .keyboard(trips.isEmpty()
+                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
+                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_NOTES))
                 .build();
     }
 
@@ -83,23 +83,11 @@ public class MyNotesCommand extends AbstractCommand {
                 .build();
     }
 
-    private List<ReplyKeyboardBuilder.KeyboardButton> getTripsKeyboard(Collection<TripDto> trips) {
-        return ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_NOTES);
-    }
-
     private List<ReplyKeyboardBuilder.KeyboardButton> getAddNoteKeyboard(long tripId) {
         return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.ADD_NOTE.getDescription(),
                         format("%s/%s", CommandType.ADD_NOTE.getName(), tripId))
-        );
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getNewTripKeyboard() {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.NEW_TRIP.getDescription(),
-                        CommandType.NEW_TRIP.getName())
         );
     }
 
