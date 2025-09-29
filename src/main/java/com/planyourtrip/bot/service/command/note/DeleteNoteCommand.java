@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.service.command.hotel;
+package com.planyourtrip.bot.service.command.note;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
@@ -17,9 +17,9 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DeleteHotelCommand extends AbstractCommand {
+public class DeleteNoteCommand extends AbstractCommand {
     private final TripService tripService;
-    private final HotelService hotelService;
+    private final NoteService noteService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
@@ -43,22 +43,21 @@ public class DeleteHotelCommand extends AbstractCommand {
     private ResponseDto processInitResponse(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_HOTEL_INIT_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_NOTE_INIT_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_HOTEL))
+                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_NOTE))
                 .build();
     }
 
-    private ResponseDto requestConfirmation(long hotelId) {
-        var hotel = hotelService.getHotelById(hotelId);
+    private ResponseDto requestConfirmation(long noteId) {
+        var note = noteService.getNoteById(noteId);
         return ResponseDto.builder()
-                .text(String.format(BotAnswer.DELETE_HOTEL_CONFIRMATION_REQUEST,
-                        hotel.getName(), hotel.getCheckInDate(), hotel.getCheckOutDate()))
+                .text(String.format(BotAnswer.DELETE_NOTE_CONFIRMATION_REQUEST, note))
                 .keyboard(List.of(
                         new ReplyKeyboardBuilder.KeyboardButton(
                                 BotAnswer.DELETE_CONFIRMATION_BUTTON,
-                                String.format("%s/%s/%s", CommandType.DELETE_HOTEL.getName(), hotel.getId(),
+                                String.format("%s/%s/%s", CommandType.DELETE_NOTE.getName(), note.getId(),
                                         BotAnswer.CONFIRMED)),
                         new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.CANCEL, CommandType.CANCEL.getName())))
                 .build();
@@ -72,15 +71,15 @@ public class DeleteHotelCommand extends AbstractCommand {
         }
     }
 
-    private ResponseDto doDelete(long hotelId) {
-        hotelService.deleteHotel(hotelId);
+    private ResponseDto doDelete(long noteId) {
+        noteService.deleteNote(noteId);
         return ResponseDto.builder()
-                .text(BotAnswer.DELETE_HOTEL_FINAL_RESPONSE)
+                .text(BotAnswer.DELETE_NOTE_FINAL_RESPONSE)
                 .build();
     }
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.DELETE_HOTEL;
+        return CommandType.DELETE_NOTE;
     }
 }

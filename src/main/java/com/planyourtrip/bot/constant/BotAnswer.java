@@ -49,7 +49,7 @@ public class BotAnswer {
     public static final String ADD_NOTE_CONTENT_RESPONSE = "Введите заметку";
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
     public static final String DELETE_NOTE_INIT_RESPONSE = "Выберите заметку, которую хотите удалить:";
-    public static final String DELETE_NOTE_CONFIRMATION_REQUEST = "Вы действительно хотите удалить заметку <b>%s%s</b>?";
+    public static final String DELETE_NOTE_CONFIRMATION_REQUEST = "Вы действительно хотите удалить заметку: <b>%s</b>?";
     public static final String DELETE_NOTE_FINAL_RESPONSE = "Заметка удалена";
 
     public static final String DELETE_CONFIRMATION_BUTTON = "Подтвердить удаление";

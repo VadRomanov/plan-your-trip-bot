@@ -4,7 +4,7 @@ import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.TicketDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
+import com.planyourtrip.bot.service.command.trip.TripService;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
@@ -21,7 +21,7 @@ import static java.lang.String.format;
 @Component
 @RequiredArgsConstructor
 public class MyTicketsCommand extends AbstractCommand {
-    private final TripServiceImpl tripService;
+    private final TripService tripService;
     private final TicketService ticketService;
 
     @Override

@@ -9,7 +9,6 @@ import com.planyourtrip.bot.service.command.hotel.HotelService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.note.NoteService;
 import com.planyourtrip.bot.service.command.ticket.TicketService;
-import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
@@ -28,7 +27,7 @@ import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_INIT_RESPONSE;
 @Component
 @RequiredArgsConstructor
 public class MyTripsCommand extends AbstractCommand {
-    private final TripServiceImpl tripService;
+    private final TripService tripService;
     private final TicketService ticketService;
     private final HotelService hotelService;
     private final NoteService noteService;

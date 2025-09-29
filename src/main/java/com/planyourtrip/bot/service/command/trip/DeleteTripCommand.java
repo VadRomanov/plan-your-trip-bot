@@ -3,7 +3,6 @@ package com.planyourtrip.bot.service.command.trip;
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.trip.impl.TripServiceImpl;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.ResponseDto;
@@ -19,7 +18,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DeleteTripCommand extends AbstractCommand {
-    private final TripServiceImpl tripService;
+    private final TripService tripService;
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
