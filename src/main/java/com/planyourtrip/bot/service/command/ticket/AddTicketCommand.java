@@ -163,7 +163,7 @@ public class AddTicketCommand extends AbstractCommand {
     }
 
     private List<ReplyKeyboardBuilder.KeyboardButton> getTickerTypesKeyboard(long tripId) {
-        return ReplyKeyboardBuilder.buildButtons(
+        return ReplyKeyboardBuilder.buildTypesButtons(
                 Arrays.stream(TicketType.values()).toList(),
                 CommandType.ADD_TICKET,
                 tripId);

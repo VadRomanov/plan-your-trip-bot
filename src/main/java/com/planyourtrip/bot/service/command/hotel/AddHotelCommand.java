@@ -157,7 +157,7 @@ public class AddHotelCommand extends AbstractCommand {
     }
 
     private List<ReplyKeyboardBuilder.KeyboardButton> getAccommodationTypesKeyboard(long tripId) {
-        return ReplyKeyboardBuilder.buildButtons(
+        return ReplyKeyboardBuilder.buildTypesButtons(
                 Arrays.stream(AccommodationType.values()).toList(),
                 CommandType.ADD_HOTEL,
                 tripId);

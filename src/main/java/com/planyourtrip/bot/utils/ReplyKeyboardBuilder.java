@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @UtilityClass
 public class ReplyKeyboardBuilder {
@@ -33,9 +34,23 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildButtons(List<? extends AbstractType> types,
-                                                                         CommandType commandType,
-                                                                         long id) {
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildEntitiesButtons(Map<Long, String> entities,
+                                                                                 long tripId,
+                                                                                 CommandType commandType) {
+        List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
+        for (var entity : entities.entrySet()) {
+            var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
+                    entity.getValue(),
+                    String.format("%s/%s/%s", commandType.getName(), tripId, entity.getKey())
+            );
+            buttons.add(newTripButton);
+        }
+        return buttons;
+    }
+
+    public static List<ReplyKeyboardBuilder.KeyboardButton> buildTypesButtons(Collection<? extends AbstractType> types,
+                                                                              CommandType commandType,
+                                                                              long id) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var type : types) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
@@ -52,26 +67,21 @@ public class ReplyKeyboardBuilder {
     }
 
     public static ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons, int buttonsPerRow) {
-
         final List<InlineKeyboardRow> rowList = new ArrayList<>();
         InlineKeyboardRow buttonsRow = null;
-
         for (int i = 0; i < buttons.size(); i++) {
             if (i % buttonsPerRow == 0) {
                 buttonsRow = new InlineKeyboardRow();
             }
-
             var button = InlineKeyboardButton.builder()
                     .text(buttons.get(i).text())
                     .callbackData(buttons.get(i).callbackData())
                     .build();
             buttonsRow.add(button);
-
             if (i % buttonsPerRow == 0) {
                 rowList.add(buttonsRow);
             }
         }
-
         return InlineKeyboardMarkup.builder()
                 .keyboard(rowList)
                 .build();
