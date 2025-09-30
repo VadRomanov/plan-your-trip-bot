@@ -24,5 +24,5 @@ public interface NoteService {
 
     NoteDto getNoteToUpdate(long chatId);
 
-    void updateNote(NoteDto note);
+    void updateNote(NoteDto note, long chatId);
 }

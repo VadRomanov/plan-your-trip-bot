@@ -109,7 +109,7 @@ public class EditNoteCommand extends AbstractCommand {
         long chatId = messageDto.getChatId();
         var note = noteService.getNoteToUpdate(chatId);
         note.setTitle(messageDto.getMsgText());
-        noteService.updateNote(note);
+        noteService.updateNote(note, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
@@ -120,7 +120,7 @@ public class EditNoteCommand extends AbstractCommand {
         long chatId = messageDto.getChatId();
         var note = noteService.getNoteToUpdate(chatId);
         note.setContent(messageDto.getMsgText());
-        noteService.updateNote(note);
+        noteService.updateNote(note, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)

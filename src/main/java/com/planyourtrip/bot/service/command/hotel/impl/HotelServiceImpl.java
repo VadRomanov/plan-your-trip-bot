@@ -24,6 +24,7 @@ public class HotelServiceImpl implements HotelService {
     private final HotelCoreClient hotelCoreClient;
 
     private static final Map<Long, HotelDto> HOTEL_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, HotelDto> HOTEL_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createHotel(int code, long tripId, long chatId) {
@@ -88,12 +89,19 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    public void fetchHotelById(long id, long chatId) {
+        var hotel = getHotelById(id);
+        HOTEL_DTO_CHAT_UPDATE_CONTAINER.put(chatId, hotel);
+    }
+
+    @Override
     public void deleteHotel(long id) {
         log.debug("Delete hotel by id {}", id);
         hotelCoreClient.deleteHotel(id);
         log.info("Hotel deleted by id {}", id);
     }
 
+    @Override
     public HotelDto commitNewHotel(long chatId) {
         log.debug("Commit hotel for chatId {}", chatId);
         var hotel = HOTEL_DTO_CHAT_CONTAINER.get(chatId);
@@ -102,5 +110,18 @@ public class HotelServiceImpl implements HotelService {
 
         log.info("Hotel {} for chatId {} commited", hotel, chatId);
         return savedHotel;
+    }
+
+    @Override
+    public HotelDto getHotelToUpdate(long chatId) {
+        return HOTEL_DTO_CHAT_UPDATE_CONTAINER.get(chatId);
+    }
+
+    @Override
+    public void updateHotel(HotelDto hotel, long chatId) {
+        log.debug("Update hotel {}", hotel);
+        var savedHotel = hotelCoreClient.updateHotel(hotel.getId(), hotel);
+        HOTEL_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
+        log.info("Hotel {} updated", savedHotel);
     }
 }

@@ -39,7 +39,7 @@ public class BotAnswer {
     public static final String ADD_HOTEL_CHECK_OUT_RESPONSE = "Введите дату выезда в формате дд.ММ.гггг\uD83D\uDCC5";
     public static final String ADD_HOTEL_FILE_RESPONSE = "Добавьте подтверждение бронирования";
     public static final String ADD_HOTEL_FINAL_RESPONSE = "Размещение добавлено!✅";
-    public static final String DELETE_HOTEL_INIT_RESPONSE = "Выберите размещение, которое хотите удалить:";
+    public static final String CHOOSE_HOTEL_RESPONSE = "Выберите размещение:";
     public static final String DELETE_HOTEL_CONFIRMATION_REQUEST = "Вы действительно хотите удалить размещение <b>%s (%s - %s)</b>?";
     public static final String DELETE_HOTEL_FINAL_RESPONSE = "Размещение удалено";
 

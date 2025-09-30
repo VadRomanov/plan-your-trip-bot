@@ -49,7 +49,7 @@ public class DeleteHotelCommand extends AbstractCommand {
     private ResponseDto requestTripId(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_HOTEL_INIT_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_HOTEL_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_HOTEL))
@@ -59,7 +59,7 @@ public class DeleteHotelCommand extends AbstractCommand {
     private ResponseDto requestHotelId(long tripId) {
         var hotels = hotelService.getHotelsByTripId(tripId);
         return ResponseDto.builder()
-                .text(hotels.isEmpty() ? BotAnswer.MY_HOTELS_EMPTY_RESPONSE : BotAnswer.DELETE_HOTEL_INIT_RESPONSE)
+                .text(hotels.isEmpty() ? BotAnswer.MY_HOTELS_EMPTY_RESPONSE : BotAnswer.CHOOSE_HOTEL_RESPONSE)
                 .keyboard(hotels.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_HOTEL)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(mapHotelsToMap(hotels), tripId,

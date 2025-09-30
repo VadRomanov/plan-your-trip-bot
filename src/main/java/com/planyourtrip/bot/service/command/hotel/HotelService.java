@@ -21,8 +21,13 @@ public interface HotelService {
 
     HotelDto getHotelById(long id);
 
+    void fetchHotelById(long id, long chatId);
+
     void deleteHotel(long id);
 
     HotelDto commitNewHotel(long chatId);
 
+    HotelDto getHotelToUpdate(long chatId);
+
+    void updateHotel(HotelDto hotel, long chatId);
 }
