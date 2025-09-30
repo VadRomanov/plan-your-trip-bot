@@ -48,16 +48,19 @@ public class BotAnswer {
     public static final String ADD_NOTE_TITLE_RESPONSE = "Введите заголовок заметки";
     public static final String ADD_NOTE_CONTENT_RESPONSE = "Введите заметку";
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
-    public static final String DELETE_NOTE_INIT_RESPONSE = "Выберите заметку, которую хотите удалить:";
+    public static final String CHOOSE_NOTE_RESPONSE = "Выберите заметку:";
     public static final String DELETE_NOTE_CONFIRMATION_REQUEST = "Вы действительно хотите удалить заметку: <b>%s</b>?";
     public static final String DELETE_NOTE_FINAL_RESPONSE = "Заметка удалена";
 
     public static final String DELETE_CONFIRMATION_BUTTON = "Подтвердить удаление";
+    public static final String EDIT_CHOOSE_FIELD_RESPONSE = "Выберите, что хотели бы изменить:";
     public static final String CHOOSE_EDIT_RESPONSE = "Выберите действие";
+    public static final String NEW_VALUE_RESPONSE = "Введите новое значение:";
     public static final String EXPIRED = " (Завершено)";
     public static final String CONFIRMED = "Да";
     public static final String CANCEL = "<< Назад";
     public static final String SKIP = "Пропустить";
+    public static final String DONE = "Готово!";
 
     public static final String HELP_ANSWER = String.format("""
                     Я помогу тебе создать и управлять твоими путешествиями ✈️.

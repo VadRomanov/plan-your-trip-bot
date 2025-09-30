@@ -20,6 +20,7 @@ public class TripDto {
     private LocalDate endDate;
     private Boolean expired;
     private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     private Set<Long> ticketIds;
     private Set<Long> hotelIds;
     private Set<Long> noteIds;

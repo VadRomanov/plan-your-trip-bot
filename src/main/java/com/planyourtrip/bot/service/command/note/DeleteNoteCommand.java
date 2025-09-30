@@ -49,7 +49,7 @@ public class DeleteNoteCommand extends AbstractCommand {
     private ResponseDto requestTripId(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.DELETE_NOTE_INIT_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_NOTE))
@@ -59,7 +59,7 @@ public class DeleteNoteCommand extends AbstractCommand {
     private ResponseDto requestNoteId(long tripId) {
         var notes = noteService.getNotesByTripId(tripId);
         return ResponseDto.builder()
-                .text(notes.isEmpty() ? BotAnswer.MY_NOTES_EMPTY_RESPONSE : BotAnswer.DELETE_NOTE_INIT_RESPONSE)
+                .text(notes.isEmpty() ? BotAnswer.MY_NOTES_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_RESPONSE)
                 .keyboard(notes.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_NOTE)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(mapNotesToMap(notes), tripId,

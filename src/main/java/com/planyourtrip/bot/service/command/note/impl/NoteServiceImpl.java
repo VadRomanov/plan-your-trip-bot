@@ -19,6 +19,7 @@ public class NoteServiceImpl implements NoteService {
     private final NoteCoreClient noteCoreClient;
 
     private static final Map<Long, NoteDto.NoteDtoBuilder> NOTE_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, NoteDto> NOTE_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createNote(long tripId, long chatId) {
@@ -59,6 +60,12 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    public void fetchNoteById(long id, long chatId) {
+        var note = getNoteById(id);
+        NOTE_DTO_CHAT_UPDATE_CONTAINER.put(chatId, note);
+    }
+
+    @Override
     public void deleteNote(long id) {
         log.debug("Delete note by id {}", id);
         noteCoreClient.deleteNote(id);
@@ -74,5 +81,17 @@ public class NoteServiceImpl implements NoteService {
 
         log.info("Note {} for chatId {} commited", savedNote, chatId);
         return savedNote;
+    }
+
+    @Override
+    public NoteDto getNoteToUpdate(long chatId) {
+        return NOTE_DTO_CHAT_UPDATE_CONTAINER.get(chatId);
+    }
+
+    @Override
+    public void updateNote(NoteDto note) {
+        log.debug("Update note {}", note);
+        var savedNote = noteCoreClient.updateNote(note.getId(), note);
+        log.info("Note {} updated", savedNote);
     }
 }
