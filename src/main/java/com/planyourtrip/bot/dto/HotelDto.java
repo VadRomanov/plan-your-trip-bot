@@ -18,6 +18,7 @@ public class HotelDto {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private String address;
+    private String fileUrl;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 

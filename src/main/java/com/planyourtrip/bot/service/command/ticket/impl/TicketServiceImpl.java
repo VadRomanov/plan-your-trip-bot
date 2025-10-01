@@ -127,8 +127,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void updateTicket(TicketDto ticket, long chatId) {
         log.debug("Update ticket {}", ticket);
-        var updateTicket = ticketCoreClient.updateTicket(ticket.getId(), ticket);
+        var updatedTicket = ticketCoreClient.updateTicket(ticket.getId(), ticket);
         TICKET_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
-        log.info("Ticket {} updated", updateTicket);
+        log.info("Ticket {} updated", updatedTicket);
     }
 }

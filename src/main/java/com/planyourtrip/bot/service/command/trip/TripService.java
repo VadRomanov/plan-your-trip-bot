@@ -17,8 +17,13 @@ public interface TripService {
 
     TripDto getTripById(long id);
 
+    void fetchTripById(long id, long chatId);
+
     void deleteTrip(long id);
 
     TripDto commitNewTrip(long chatId);
 
+    TripDto getTripToUpdate(long chatId);
+
+    void updateTrip(TripDto trip, long chatId);
 }

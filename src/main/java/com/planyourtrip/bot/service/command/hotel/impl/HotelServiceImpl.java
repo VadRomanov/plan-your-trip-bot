@@ -73,6 +73,14 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    public void setFileId(String fileId, long chatId) {
+        var hotel = HOTEL_DTO_CHAT_CONTAINER.get(chatId);
+        log.debug("Set file_id {}, chatId {}", fileId, chatId);
+        hotel.setFileUrl(fileId);
+        HOTEL_DTO_CHAT_CONTAINER.put(chatId, hotel);
+    }
+
+    @Override
     public Collection<HotelDto> getHotelsByTripId(long tripId) {
         log.debug("Get hotels by tripId {}", tripId);
         var hotels = hotelCoreClient.getHotelsByTrip(tripId);
@@ -120,8 +128,8 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public void updateHotel(HotelDto hotel, long chatId) {
         log.debug("Update hotel {}", hotel);
-        var updateHotel = hotelCoreClient.updateHotel(hotel.getId(), hotel);
+        var updatedHotel = hotelCoreClient.updateHotel(hotel.getId(), hotel);
         HOTEL_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
-        log.info("Hotel {} updated", updateHotel);
+        log.info("Hotel {} updated", updatedHotel);
     }
 }

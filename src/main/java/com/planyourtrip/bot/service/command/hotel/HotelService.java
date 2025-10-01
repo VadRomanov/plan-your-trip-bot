@@ -17,6 +17,8 @@ public interface HotelService {
 
     void setCheckOutDate(LocalDate checkOutDate, long chatId);
 
+    void setFileId(String fileId, long chatId);
+
     Collection<HotelDto> getHotelsByTripId(long tripId);
 
     HotelDto getHotelById(long id);

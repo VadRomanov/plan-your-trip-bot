@@ -25,8 +25,8 @@ public interface TripCoreClient {
     @RequestLine("DELETE /{id}")
     Void deleteTrip(@Param Long id);
 
- //   @RequestLine("PUT /{id}")
- //   TripDto updateTrip(@PathVariable Long id, @RequestBody TripDto tripDto);
+    @RequestLine("PUT /{id}")
+    TripDto updateTrip(@Param Long id, @RequestBody TripDto tripDto);
 
     @RequestLine("GET /user/{telegramId}")
     Collection<TripDto> getTripsByUser(@Param Long telegramId);

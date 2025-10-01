@@ -4,6 +4,7 @@ import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.trip.util.TripUtil;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
@@ -40,7 +41,7 @@ public class NewTripCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
-        return switch (State.valueOf(messageDto.getState().getState())) {
+        return switch (TripUtil.State.valueOf(messageDto.getState().getState())) {
             case AWAIT_NAME -> processNameResponse(messageDto);
             case AWAIT_START_DT -> processStartDtResponse(messageDto);
             case AWAIT_END_DT -> processEndDtResponse(messageDto);
@@ -49,9 +50,9 @@ public class NewTripCommand extends AbstractCommand {
 
     private ResponseDto processInitResponse(long chatId) {
         getUserStateManager().setState(chatId,
-                new UserState(CommandType.NEW_TRIP, State.AWAIT_NAME.name(), null));
+                new UserState(CommandType.NEW_TRIP, TripUtil.State.AWAIT_NAME.name(), null));
         return ResponseDto.builder()
-                .text(format(BotAnswer.NEW_TRIP_INIT_RESPONSE, LocalDateTime.now().getYear()))
+                .text(format(BotAnswer.NEW_TRIP_NAME_REQUEST, LocalDateTime.now().getYear()))
                 .build();
     }
 
@@ -61,9 +62,9 @@ public class NewTripCommand extends AbstractCommand {
         tripService.createTrip(messageDto.getMsgText(), user.getId(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.NEW_TRIP)
-                .setState(State.AWAIT_START_DT.name()));
+                .setState(TripUtil.State.AWAIT_START_DT.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.NEW_TRIP_NAME_RESPONSE)
+                .text(BotAnswer.NEW_TRIP_START_DT_REQUEST)
                 .build();
     }
 
@@ -73,9 +74,9 @@ public class NewTripCommand extends AbstractCommand {
         tripService.setStartDt(startDt, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.NEW_TRIP)
-                .setState(State.AWAIT_END_DT.name()));
+                .setState(TripUtil.State.AWAIT_END_DT.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.NEW_TRIP_START_DT_RESPONSE)
+                .text(BotAnswer.NEW_TRIP_END_DT_REQUEST)
                 .build();
     }
 
@@ -116,7 +117,4 @@ public class NewTripCommand extends AbstractCommand {
         return CommandType.NEW_TRIP;
     }
 
-    private enum State {
-        AWAIT_NAME, AWAIT_START_DT, AWAIT_END_DT
-    }
 }

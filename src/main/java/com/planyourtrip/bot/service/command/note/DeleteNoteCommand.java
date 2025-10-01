@@ -2,8 +2,8 @@ package com.planyourtrip.bot.service.command.note;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.NoteDto;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.note.util.NoteUtil;
 import com.planyourtrip.bot.service.command.trip.TripService;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -32,13 +29,13 @@ public class DeleteNoteCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        var step = callbackDto.getCallbackData().length;
+        var step = callbackDto.getCallbackData().size();
         if (step == 1) {
             return requestTripId(callbackDto.getTelegramId());
         } else if (step == 2) {
-            return requestNoteId(Long.parseLong(callbackDto.getCallbackData()[1]));
+            return requestNoteId(Long.parseLong(callbackDto.getCallbackData().get(1)));
         } else if (step == 3) {
-            return requestConfirmation(Long.parseLong(callbackDto.getCallbackData()[1]));
+            return requestConfirmation(Long.parseLong(callbackDto.getCallbackData().get(1)));
         } else if (step == 4) {
             return processConfirmation(callbackDto);
         } else {
@@ -49,7 +46,7 @@ public class DeleteNoteCommand extends AbstractCommand {
     private ResponseDto requestTripId(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_NOTE))
@@ -59,10 +56,10 @@ public class DeleteNoteCommand extends AbstractCommand {
     private ResponseDto requestNoteId(long tripId) {
         var notes = noteService.getNotesByTripId(tripId);
         return ResponseDto.builder()
-                .text(notes.isEmpty() ? BotAnswer.MY_NOTES_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_RESPONSE)
+                .text(notes.isEmpty() ? BotAnswer.MY_NOTES_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_REQUEST)
                 .keyboard(notes.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_NOTE)
-                        : ReplyKeyboardBuilder.buildEntitiesButtons(mapNotesToMap(notes), tripId,
+                        : ReplyKeyboardBuilder.buildEntitiesButtons(NoteUtil.mapNotesToMap(notes), tripId,
                         CommandType.DELETE_NOTE))
                 .build();
     }
@@ -73,16 +70,16 @@ public class DeleteNoteCommand extends AbstractCommand {
                 .text(String.format(BotAnswer.DELETE_NOTE_CONFIRMATION_REQUEST, note))
                 .keyboard(List.of(
                         new ReplyKeyboardBuilder.KeyboardButton(
-                                BotAnswer.DELETE_CONFIRMATION_BUTTON,
+                                BotAnswer.DELETE_CONFIRMATION_REQUEST,
                                 String.format("%s/%s/%s/%s", CommandType.DELETE_NOTE.getName(), note.getTripId(),
-                                       note.getId(), BotAnswer.CONFIRMED)),
+                                        note.getId(), BotAnswer.CONFIRMED)),
                         new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.CANCEL, CommandType.CANCEL.getName())))
                 .build();
     }
 
     private ResponseDto processConfirmation(CallbackDto callbackDto) {
-        if (callbackDto.getCallbackData()[3].equals(BotAnswer.CONFIRMED)) {
-            return doDelete(Long.parseLong(callbackDto.getCallbackData()[2]));
+        if (callbackDto.getCallbackData().get(3).equals(BotAnswer.CONFIRMED)) {
+            return doDelete(Long.parseLong(callbackDto.getCallbackData().get(2)));
         } else {
             return returnErrorMessage();
         }
@@ -93,11 +90,6 @@ public class DeleteNoteCommand extends AbstractCommand {
         return ResponseDto.builder()
                 .text(BotAnswer.DELETE_NOTE_FINAL_RESPONSE)
                 .build();
-    }
-
-    private Map<Long, String> mapNotesToMap(Collection<NoteDto> notes) {
-        return notes.stream()
-                .collect(Collectors.toMap(NoteDto::getId, NoteDto::toString));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.planyourtrip.bot.service.command.note;
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.note.util.NoteUtil;
 import com.planyourtrip.bot.service.command.trip.TripService;
 import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
@@ -27,42 +28,34 @@ public class AddNoteCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCommand(CommandDto commandDto) {
-        return processCommandResponse(commandDto);
-    }
-
-    @Override
-    public ResponseDto processCallback(CallbackDto callbackDto) {
-        return processCallbackResponse(callbackDto);
-    }
-
-    @Override
-    public ResponseDto processMessage(MessageDto messageDto) {
-        return switch (State.valueOf(messageDto.getState().getState())) {
-            case AWAIT_TITLE -> processTitleResponse(messageDto);
-            case AWAIT_CONTENT -> processContentResponse(messageDto);
-        };
-    }
-
-    private ResponseDto processCommandResponse(CommandDto commandDto) {
         var trips = tripService.getTripsByTelegramId(commandDto.getTelegramId());
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.ADD_NOTE_COMMAND_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_REQUEST)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.ADD_NOTE))
                 .build();
     }
 
-    private ResponseDto processCallbackResponse(CallbackDto callbackDto) {
+    @Override
+    public ResponseDto processCallback(CallbackDto callbackDto) {
         long chatId = callbackDto.getChatId();
-        var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
+        var tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
         noteService.createNote(tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_NOTE)
-                .setState(State.AWAIT_TITLE.name()));
+                .setState(NoteUtil.State.AWAIT_TITLE.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_NOTE_TITLE_RESPONSE)
+                .text(BotAnswer.ADD_NOTE_TITLE_REQUEST)
                 .build();
+    }
+
+    @Override
+    public ResponseDto processMessage(MessageDto messageDto) {
+        return switch (NoteUtil.State.valueOf(messageDto.getState().getState())) {
+            case AWAIT_TITLE -> processTitleResponse(messageDto);
+            case AWAIT_CONTENT -> processContentResponse(messageDto);
+        };
     }
 
     private ResponseDto processTitleResponse(MessageDto messageDto) {
@@ -70,9 +63,9 @@ public class AddNoteCommand extends AbstractCommand {
         noteService.setTitle(messageDto.getMsgText(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_NOTE)
-                .setState(State.AWAIT_TITLE.name()));
+                .setState(NoteUtil.State.AWAIT_TITLE.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_NOTE_CONTENT_RESPONSE)
+                .text(BotAnswer.ADD_NOTE_CONTENT_REQUEST)
                 .build();
     }
 
@@ -103,7 +96,4 @@ public class AddNoteCommand extends AbstractCommand {
         return CommandType.ADD_NOTE;
     }
 
-    private enum State {
-        AWAIT_TITLE, AWAIT_CONTENT
-    }
 }

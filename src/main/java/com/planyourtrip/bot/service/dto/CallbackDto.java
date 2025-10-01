@@ -6,12 +6,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Accessors(chain = true)
 @SuperBuilder
 public class CallbackDto extends AbstractRequestDto {
-    private String[] callbackData;
+    private List<String> callbackData;
     private String resourceId;
     @NonNull
     private Integer messageId;

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_EMPTY_RESPONSE;
-import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_INIT_RESPONSE;
+import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_LIST_RESPONSE;
 
 @Slf4j
 @Component
@@ -39,11 +39,11 @@ public class MyTripsCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        var step = callbackDto.getCallbackData().length;
+        var step = callbackDto.getCallbackData().size();
         if (step == 1) {
             return processInitResponse(callbackDto.getTelegramId());
         } else if (step == 2) {
-            var tripId = Long.parseLong(callbackDto.getCallbackData()[1]);
+            var tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
             var trip = tripService.getTripById(tripId);
             var tickets = ticketService.getTicketsByTripId(tripId);
             var hotels = hotelService.getHotelsByTripId(tripId);
@@ -79,7 +79,7 @@ public class MyTripsCommand extends AbstractCommand {
     private ResponseDto processInitResponse(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_INIT_RESPONSE)
+                .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_LIST_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TRIPS))

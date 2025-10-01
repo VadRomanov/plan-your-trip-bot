@@ -21,9 +21,10 @@ import static java.util.Objects.nonNull;
 @Service
 @RequiredArgsConstructor
 public class TripServiceImpl implements TripService {
-    private final TripCoreClient tripClient;
+    private final TripCoreClient tripCoreClient;
 
     private static final Map<Long, TripDto> TRIP_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, TripDto> TRIP_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createTrip(String name, long userId, long chatId) {
@@ -58,7 +59,7 @@ public class TripServiceImpl implements TripService {
     @Override
     public Collection<TripDto> getTripsByTelegramId(long telegramId) {
         log.debug("Get trips by telegramId {}", telegramId);
-        var trips = tripClient.getTripsByUser(telegramId);
+        var trips = tripCoreClient.getTripsByUser(telegramId);
         log.info("{} trips obtained by telegramId {}", trips.size(), telegramId);
         return trips;
     }
@@ -66,25 +67,44 @@ public class TripServiceImpl implements TripService {
     @Override
     public TripDto getTripById(long id) {
         log.debug("Get trip by id {}", id);
-        var trip = tripClient.getTrip(id);
+        var trip = tripCoreClient.getTrip(id);
         log.info("Trip obtained by id {}", trip);
         return trip;
     }
 
     @Override
+    public void fetchTripById(long id, long chatId) {
+        var trip = getTripById(id);
+        TRIP_DTO_CHAT_UPDATE_CONTAINER.put(chatId, trip);
+    }
+
+    @Override
     public void deleteTrip(long id) {
         log.debug("Delete trip by id {}", id);
-        tripClient.deleteTrip(id);
+        tripCoreClient.deleteTrip(id);
         log.info("Trip deleted by id {}", id);
     }
 
     public TripDto commitNewTrip(long chatId) {
         log.debug("Commit trip for chatId {}", chatId);
         var trip = TRIP_DTO_CHAT_CONTAINER.get(chatId);
-        var savedTrip = tripClient.createTrip(trip);
+        var savedTrip = tripCoreClient.createTrip(trip);
         TRIP_DTO_CHAT_CONTAINER.remove(chatId);
 
         log.info("Trip {} for chatId {} commited", trip, chatId);
         return savedTrip;
+    }
+
+    @Override
+    public TripDto getTripToUpdate(long chatId) {
+        return TRIP_DTO_CHAT_UPDATE_CONTAINER.get(chatId);
+    }
+
+    @Override
+    public void updateTrip(TripDto trip, long chatId) {
+        log.debug("Update trip {}", trip);
+        var updatedTrip = tripCoreClient.updateTrip(trip.getId(), trip);
+        TRIP_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
+        log.info("Trip {} updated", updatedTrip);
     }
 }

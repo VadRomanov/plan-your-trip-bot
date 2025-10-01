@@ -31,11 +31,11 @@ public class MyNotesCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        var step = callbackDto.getCallbackData().length;
+        var step = callbackDto.getCallbackData().size();
         if (step == 1) {
             return processInitResponse(callbackDto.getTelegramId());
         } else if (step == 2) {
-            return prepareAnswer(Long.parseLong(callbackDto.getCallbackData()[1]));
+            return prepareAnswer(Long.parseLong(callbackDto.getCallbackData().get(1)));
         } else {
             return returnErrorMessage();
         }
@@ -44,7 +44,7 @@ public class MyNotesCommand extends AbstractCommand {
     private ResponseDto processInitResponse(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_NOTES))

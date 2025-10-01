@@ -5,9 +5,12 @@ import com.planyourtrip.bot.service.dto.CallbackDto;
 import com.planyourtrip.bot.service.dto.CommandDto;
 import com.planyourtrip.bot.service.dto.MessageDto;
 import com.planyourtrip.bot.service.state.UserState;
+import com.planyourtrip.bot.utils.CallbackDataUtil;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
+
+import java.util.Arrays;
 
 @Component
 public class TelegramMapper {
@@ -34,10 +37,9 @@ public class TelegramMapper {
     }
 
     public CallbackDto toCallbackDto(CallbackQuery callback) {
-        var callbackData = callback.getData().split("/");
-        var commandType = CommandType.valueOf(callbackData[0].toUpperCase());
+        var callbackData = Arrays.asList(callback.getData().split("/"));
         return CallbackDto.builder()
-                .commandType(commandType)
+                .commandType(CallbackDataUtil.getCommandType(callbackData))
                 .telegramId(callback.getFrom().getId())
                 .chatId(callback.getMessage().getChatId())
                 .userName(callback.getFrom().getUserName())
