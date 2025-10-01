@@ -32,7 +32,7 @@ public enum CommandType {
     LEAVE_TRIP("leave_trip", "Leave the current trip"),
 
     HELP("help", "Show help and available commands"),
-    SUMMERY("summery", "Show summery of the current trip"),
+    SUMMARY("summary", "Show summary of the current trip"),
     MENU("menu", "Open main menu with navigation options"),
     START("start", "Start using the bot"),
     LANGUAGE("language", "Change your preferred language"),
