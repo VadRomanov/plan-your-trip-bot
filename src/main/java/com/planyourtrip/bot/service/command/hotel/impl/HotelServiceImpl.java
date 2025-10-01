@@ -120,8 +120,8 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public void updateHotel(HotelDto hotel, long chatId) {
         log.debug("Update hotel {}", hotel);
-        var savedHotel = hotelCoreClient.updateHotel(hotel.getId(), hotel);
+        var updateHotel = hotelCoreClient.updateHotel(hotel.getId(), hotel);
         HOTEL_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
-        log.info("Hotel {} updated", savedHotel);
+        log.info("Hotel {} updated", updateHotel);
     }
 }

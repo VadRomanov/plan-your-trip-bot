@@ -24,6 +24,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketCoreClient ticketCoreClient;
 
     private static final Map<Long, TicketDto> TICKET_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, TicketDto> TICKET_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createTicket(int type, long tripId, long chatId) {
@@ -96,6 +97,12 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public void fetchTicketById(long id, long chatId) {
+        var ticket = getTicketById(id);
+        TICKET_DTO_CHAT_UPDATE_CONTAINER.put(chatId, ticket);
+    }
+
+    @Override
     public void deleteTicket(long id) {
         log.debug("Delete ticket by id {}", id);
         ticketCoreClient.deleteTicket(id);
@@ -110,5 +117,18 @@ public class TicketServiceImpl implements TicketService {
 
         log.info("Ticket {} for chatId {} commited", ticket, chatId);
         return savedTicket;
+    }
+
+    @Override
+    public TicketDto getTicketToUpdate(long chatId) {
+        return TICKET_DTO_CHAT_UPDATE_CONTAINER.get(chatId);
+    }
+
+    @Override
+    public void updateTicket(TicketDto ticket, long chatId) {
+        log.debug("Update ticket {}", ticket);
+        var updateTicket = ticketCoreClient.updateTicket(ticket.getId(), ticket);
+        TICKET_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
+        log.info("Ticket {} updated", updateTicket);
     }
 }

@@ -26,7 +26,7 @@ public class BotAnswer {
             "Введите дату и время прибытия в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
     public static final String ADD_TICKET_FILE_RESPONSE = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
-    public static final String DELETE_TICKET_INIT_RESPONSE = "Выберите билет, который хотите удалить:";
+    public static final String CHOOSE_TICKET_RESPONSE = "Выберите билет:";
     public static final String DELETE_TICKET_CONFIRMATION_REQUEST = "Вы действительно хотите удалить билет <b>%s</b>?";
     public static final String DELETE_TICKET_FINAL_RESPONSE = "Билет удален";
 

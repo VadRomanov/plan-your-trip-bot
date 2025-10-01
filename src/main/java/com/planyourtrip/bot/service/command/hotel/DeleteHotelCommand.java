@@ -49,7 +49,7 @@ public class DeleteHotelCommand extends AbstractCommand {
     private ResponseDto requestTripId(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_HOTEL_RESPONSE)
+                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_RESPONSE)
                 .keyboard(trips.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_HOTEL))

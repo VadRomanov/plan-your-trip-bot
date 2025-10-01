@@ -126,8 +126,8 @@ public class AddTicketCommand extends AbstractCommand {
 
     private ResponseDto processArrivalDtResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var departureDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticketService.setArrivalDt(departureDt, chatId);
+        var arrivalDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
+        ticketService.setArrivalDt(arrivalDt, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(CommandType.ADD_TICKET)
                 .setState(State.AWAIT_FILE.name()));

@@ -91,8 +91,8 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public void updateNote(NoteDto note, long chatId) {
         log.debug("Update note {}", note);
-        var savedNote = noteCoreClient.updateNote(note.getId(), note);
+        var updateNote = noteCoreClient.updateNote(note.getId(), note);
         NOTE_DTO_CHAT_UPDATE_CONTAINER.remove(chatId);
-        log.info("Note {} updated", savedNote);
+        log.info("Note {} updated", updateNote);
     }
 }

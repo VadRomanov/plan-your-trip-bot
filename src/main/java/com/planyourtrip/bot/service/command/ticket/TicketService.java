@@ -23,8 +23,13 @@ public interface TicketService {
 
     TicketDto getTicketById(long id);
 
+    void fetchTicketById(long id, long chatId);
+
     void deleteTicket(long id);
 
     TicketDto commitNewTicket(long chatId);
 
+    TicketDto getTicketToUpdate(long chatId);
+
+    void updateTicket(TicketDto ticket, long chatId);
 }
