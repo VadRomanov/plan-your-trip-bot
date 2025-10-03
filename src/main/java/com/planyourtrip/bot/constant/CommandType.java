@@ -10,10 +10,10 @@ public enum CommandType {
     DUPLICATE_TRIP("duplicate_trip", "Create a copy of an existing trip"),
     EDIT_TRIP("edit_trip", "Edit current trip"),
 
-    ADD_HOTEL("add_hotel", "Add a hotel or accommodation"),
-    EDIT_HOTEL("edit_hotel", "Edit hotel details"),
-    MY_HOTELS("my_hotels", "List of hotel bookings"),
-    DELETE_HOTEL("delete_hotel", "Delete a hotel "),
+    ADD_ACCOMMODATION("add_accommodation", "Add a accommodation"),
+    EDIT_ACCOMMODATION("edit_add_accommodation", "Edit accommodation details"),
+    MY_ACCOMMODATIONS("my_add_accommodations", "List of accommodation bookings"),
+    DELETE_ACCOMMODATION("delete_add_accommodation", "Delete a accommodation"),
 
     ADD_TICKET("add_ticket", "Add a new ticket"),
     MY_TICKETS("my_tickets", "List a tickets"),

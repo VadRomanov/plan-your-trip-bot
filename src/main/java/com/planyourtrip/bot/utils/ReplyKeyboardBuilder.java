@@ -2,8 +2,8 @@ package com.planyourtrip.bot.utils;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.AbstractType;
-import com.planyourtrip.bot.dto.TripDto;
+import com.planyourtrip.bot.dto.domain.AbstractType;
+import com.planyourtrip.bot.dto.domain.TripDto;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class ReplyKeyboardBuilder {
     private static final int DEFAULT_BUTTON_PER_ROW_COUNT = 2;
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildTripsButtons(Collection<TripDto> trips,
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildTripsButtons(Collection<TripDto> trips,
                                                                               CommandType commandType) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var trip : trips) {
@@ -34,7 +34,7 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildEntitiesButtons(Map<Long, String> entities,
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildEntitiesButtons(Map<Long, String> entities,
                                                                                  long tripId,
                                                                                  CommandType commandType) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildTypesButtons(Collection<? extends AbstractType> types,
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildTypesButtons(Collection<? extends AbstractType> types,
                                                                               CommandType commandType,
                                                                               long id) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
@@ -62,11 +62,11 @@ public class ReplyKeyboardBuilder {
         return buttons;
     }
 
-    public static ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons) {
+    public ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons) {
         return buildInlineKeyboard(buttons, DEFAULT_BUTTON_PER_ROW_COUNT);
     }
 
-    public static ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons, int buttonsPerRow) {
+    public ReplyKeyboard buildInlineKeyboard(List<KeyboardButton> buttons, int buttonsPerRow) {
         final List<InlineKeyboardRow> rowList = new ArrayList<>();
         InlineKeyboardRow buttonsRow = null;
         for (int i = 0; i < buttons.size(); i++) {
@@ -87,7 +87,7 @@ public class ReplyKeyboardBuilder {
                 .build();
     }
 
-    public static List<KeyboardButton> addCancelIfNeeded(List<KeyboardButton> keyboard) {
+    public List<KeyboardButton> addCancelIfNeeded(List<KeyboardButton> keyboard) {
         var contains = keyboard.stream()
                 .anyMatch(b -> b.text.equals(BotAnswer.CANCEL));
 
@@ -99,7 +99,7 @@ public class ReplyKeyboardBuilder {
         return keyboard;
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> buildNewEntityButton(CommandType newEntityType) {
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildNewEntityButton(CommandType newEntityType) {
         return List.of(new ReplyKeyboardBuilder.KeyboardButton(
                 newEntityType.getDescription(),
                 newEntityType.getName())

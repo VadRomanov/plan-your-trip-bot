@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.dto;
+package com.planyourtrip.bot.dto.domain;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class TripDto {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private Set<Long> ticketIds;
-    private Set<Long> hotelIds;
+    private Set<Long> accommodationIds;
     private Set<Long> noteIds;
     @NonNull
     private Set<Long> userIds;

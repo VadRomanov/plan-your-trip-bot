@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.ticket;
 
-import com.planyourtrip.bot.dto.TicketDto;
+import com.planyourtrip.bot.dto.domain.TicketDto;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;

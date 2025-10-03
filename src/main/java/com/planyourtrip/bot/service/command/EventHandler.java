@@ -1,10 +1,10 @@
 package com.planyourtrip.bot.service.command;
 
 import com.planyourtrip.bot.service.command.registry.CommandProcessorRegistry;
-import com.planyourtrip.bot.service.dto.AbstractRequestDto;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.MessageDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.AbstractRequestDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.MessageDto;
+import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.service.state.callback.ReplyKeyboardHistory;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;

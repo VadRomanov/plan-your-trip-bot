@@ -1,11 +1,11 @@
 package com.planyourtrip.bot.service.command.registry;
 
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.dto.AbstractRequestDto;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.MessageDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.AbstractRequestDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.CommandDto;
+import com.planyourtrip.bot.dto.MessageDto;
+import com.planyourtrip.bot.dto.ResponseDto;
 import org.springframework.beans.factory.InitializingBean;
 
 public interface Command extends InitializingBean {

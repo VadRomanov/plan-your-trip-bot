@@ -1,11 +1,12 @@
 package com.planyourtrip.bot.service.core;
 
 import com.planyourtrip.bot.config.http.FeignConfig;
-import com.planyourtrip.bot.dto.TripDto;
+import com.planyourtrip.bot.dto.domain.TripDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collection;
@@ -30,4 +31,10 @@ public interface TripCoreClient {
 
     @RequestLine("GET /user/{telegramId}")
     Collection<TripDto> getTripsByUser(@Param Long telegramId);
+
+    @RequestLine("GET /{id}/summary")
+    ResponseEntity<byte[]> getTripSummaryPdf(@Param Long id);
+
+    @RequestLine("GET /{id}/summary")
+    String getTripSummaryPlainText(@Param Long id);
 }

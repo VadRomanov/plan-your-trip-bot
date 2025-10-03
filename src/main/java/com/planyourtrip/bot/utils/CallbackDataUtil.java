@@ -7,7 +7,7 @@ import java.util.List;
 
 @UtilityClass
 public class CallbackDataUtil {
-    public static CommandType getCommandType(List<String> callbackData) {
+    public CommandType getCommandType(List<String> callbackData) {
         return CommandType.valueOf(callbackData.getFirst().toUpperCase());
     }
 }

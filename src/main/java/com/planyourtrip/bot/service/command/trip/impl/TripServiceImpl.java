@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.trip.impl;
 
-import com.planyourtrip.bot.dto.TripDto;
+import com.planyourtrip.bot.dto.domain.TripDto;
 import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.exception.ResponseCode;
 import com.planyourtrip.bot.service.command.trip.TripService;

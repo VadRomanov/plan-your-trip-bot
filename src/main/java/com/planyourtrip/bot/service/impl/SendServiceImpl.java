@@ -1,16 +1,21 @@
 package com.planyourtrip.bot.service.impl;
 
+import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.service.SendService;
-import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessages;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import static java.util.Objects.nonNull;
 
@@ -22,20 +27,22 @@ public class SendServiceImpl implements SendService {
 
     @Override
     public void sendResponse(ResponseDto responseDto) {
+        SendMessage message = null;
+        SendDocument document = null;
+        if (nonNull(responseDto.getText())) {
+            message = prepareMessToSend(responseDto);
+        }
+        if (nonNull(responseDto.getResponseFile())) {
+            document = prepareDocToSend(responseDto);
+        }
         try {
-            var message = SendMessage.builder()
-                    .text(responseDto.getText())
-                    .chatId(responseDto.getChatId())
-                    .replyMarkup(nonNull(responseDto.getKeyboard())
-                            ? ReplyKeyboardBuilder.buildInlineKeyboard(responseDto.getKeyboard())
-                            : null)
-                    .replyToMessageId(responseDto.getReplyToMessageId())
-                    .parseMode(ParseMode.HTML)
-                    .build();
-
             log.debug("Send response {}", message);
-            telegramClient.execute(message);
-
+            if (nonNull(document)) {
+                telegramClient.execute(document);
+            }
+            if (nonNull(message)) {
+                telegramClient.execute(message);
+            }
             if (responseDto.isNeedDelete()) {
                 deleteMessage(responseDto.getChatId(), responseDto.getMessageId());
             }
@@ -58,4 +65,27 @@ public class SendServiceImpl implements SendService {
         }
     }
 
+    private SendDocument prepareDocToSend(ResponseDto responseDto) {
+        try (var is = new ByteArrayInputStream(responseDto.getResponseFile().getBody())) {
+            var document = new InputFile(is, responseDto.getResponseFile().getFileName());
+            return SendDocument.builder()
+                    .document(document)
+                    .chatId(responseDto.getChatId())
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private SendMessage prepareMessToSend(ResponseDto responseDto) {
+        return SendMessage.builder()
+                .text(responseDto.getText())
+                .chatId(responseDto.getChatId())
+                .replyMarkup(nonNull(responseDto.getKeyboard())
+                        ? ReplyKeyboardBuilder.buildInlineKeyboard(responseDto.getKeyboard())
+                        : null)
+                .replyToMessageId(responseDto.getReplyToMessageId())
+                .parseMode(ParseMode.HTML)
+                .build();
+    }
 }

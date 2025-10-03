@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.service.dto;
+package com.planyourtrip.bot.dto;
 
 import com.planyourtrip.bot.constant.CommandType;
 import lombok.AllArgsConstructor;

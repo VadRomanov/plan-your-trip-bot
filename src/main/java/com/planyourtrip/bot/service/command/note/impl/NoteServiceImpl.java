@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.note.impl;
 
-import com.planyourtrip.bot.dto.NoteDto;
+import com.planyourtrip.bot.dto.domain.NoteDto;
 import com.planyourtrip.bot.service.command.note.NoteService;
 import com.planyourtrip.bot.service.core.NoteCoreClient;
 import lombok.RequiredArgsConstructor;
@@ -29,18 +29,18 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void setTitle(String title, long chatId) {
-        var hotelBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodationBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set note title {}, chatId {}", title, chatId);
-        hotelBuilder.title(title);
-        NOTE_DTO_CHAT_CONTAINER.put(chatId, hotelBuilder);
+        accommodationBuilder.title(title);
+        NOTE_DTO_CHAT_CONTAINER.put(chatId, accommodationBuilder);
     }
 
     @Override
     public void setContent(String content, long chatId) {
-        var hotelBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodationBuilder = NOTE_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set note content {}, chatId {}", Strings.left(content, 20), chatId);
-        hotelBuilder.content(content);
-        NOTE_DTO_CHAT_CONTAINER.put(chatId, hotelBuilder);
+        accommodationBuilder.content(content);
+        NOTE_DTO_CHAT_CONTAINER.put(chatId, accommodationBuilder);
     }
 
     @Override

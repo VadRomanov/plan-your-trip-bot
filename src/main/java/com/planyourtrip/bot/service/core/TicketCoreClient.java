@@ -1,7 +1,7 @@
 package com.planyourtrip.bot.service.core;
 
 import com.planyourtrip.bot.config.http.FeignConfig;
-import com.planyourtrip.bot.dto.TicketDto;
+import com.planyourtrip.bot.dto.domain.TicketDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;

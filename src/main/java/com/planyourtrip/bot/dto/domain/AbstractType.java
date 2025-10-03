@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.dto;
+package com.planyourtrip.bot.dto.domain;
 
 public interface AbstractType {
     String getName();

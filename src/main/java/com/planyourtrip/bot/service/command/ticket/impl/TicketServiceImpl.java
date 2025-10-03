@@ -1,7 +1,7 @@
 package com.planyourtrip.bot.service.command.ticket.impl;
 
-import com.planyourtrip.bot.dto.TicketDto;
-import com.planyourtrip.bot.dto.TicketType;
+import com.planyourtrip.bot.dto.domain.TicketDto;
+import com.planyourtrip.bot.dto.domain.TicketType;
 import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.exception.ResponseCode;
 import com.planyourtrip.bot.service.command.ticket.TicketService;

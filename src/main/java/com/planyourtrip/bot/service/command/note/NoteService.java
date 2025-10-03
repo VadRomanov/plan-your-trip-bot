@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.note;
 
-import com.planyourtrip.bot.dto.NoteDto;
+import com.planyourtrip.bot.dto.domain.NoteDto;
 
 import java.util.Collection;
 

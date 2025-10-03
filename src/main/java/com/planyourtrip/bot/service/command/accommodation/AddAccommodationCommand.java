@@ -1,20 +1,18 @@
-package com.planyourtrip.bot.service.command.ticket;
+package com.planyourtrip.bot.service.command.accommodation;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.CallbackDto;
 import com.planyourtrip.bot.dto.MessageDto;
 import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.service.command.accommodation.util.AccommodationUtil;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.ticket.util.TicketUtil;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
-import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -22,8 +20,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AddTicketCommand extends AbstractCommand {
-    private final TicketService ticketService;
+public class AddAccommodationCommand extends AbstractCommand {
+    private final AccommodationService accommodationService;
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
@@ -41,11 +39,11 @@ public class AddTicketCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
-        return switch (TicketUtil.State.valueOf(messageDto.getState().getState())) {
-            case AWAIT_DEPARTURE -> processDepartureResponse(messageDto);
-            case AWAIT_DEPART_DT -> processDepartureDtResponse(messageDto);
-            case AWAIT_ARRIVAL -> processArrivalResponse(messageDto);
-            case AWAIT_ARRIVE_DT -> processArrivalDtResponse(messageDto);
+        return switch (AccommodationUtil.State.valueOf(messageDto.getState().getState())) {
+            case AWAIT_NAME -> processNameResponse(messageDto);
+            case AWAIT_ADDRESS -> processAddressResponse(messageDto);
+            case AWAIT_CHECK_IN -> processCheckInResponse(messageDto);
+            case AWAIT_CHECK_OUT -> processCheckOutResponse(messageDto);
             case AWAIT_FILE -> processFileResponse(messageDto);
             case AWAIT_TYPE -> returnErrorMessage();
         };
@@ -53,88 +51,86 @@ public class AddTicketCommand extends AbstractCommand {
 
     private ResponseDto processTripIdResponse(long tripId) {
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_TYPE_REQUEST)
-                .keyboard(TicketUtil.getTickerTypesKeyboard(tripId))
+                .text(BotAnswer.ADD_ACCOMMODATION_TYPE_REQUEST)
+                .keyboard(AccommodationUtil.getAccommodationTypesKeyboard(tripId))
                 .build();
     }
 
     private ResponseDto processTypeResponse(CallbackDto callbackDto) {
         long chatId = callbackDto.getChatId();
         var tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
-        var ticketCode = Integer.parseInt(callbackDto.getCallbackData().get(2));
-        ticketService.createTicket(ticketCode, tripId, chatId);
+        var accommodationCode = Integer.parseInt(callbackDto.getCallbackData().get(2));
+        accommodationService.createAccommodation(accommodationCode, tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_DEPARTURE.name()));
+                .setState(AccommodationUtil.State.AWAIT_NAME.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_DEPARTURE_REQUEST)
+                .text(BotAnswer.ADD_ACCOMMODATION_NAME_REQUEST)
                 .build();
     }
 
-    private ResponseDto processDepartureResponse(MessageDto messageDto) {
+    private ResponseDto processNameResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        ticketService.setDeparture(messageDto.getMsgText(), chatId);
+        accommodationService.setName(messageDto.getMsgText(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_DEPART_DT.name()));
+                .setState(AccommodationUtil.State.AWAIT_ADDRESS.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_DEPARTURE_DT_REQUEST)
+                .text(BotAnswer.ADD_ACCOMMODATION_ADDRESS_REQUEST)
                 .build();
     }
 
-    private ResponseDto processDepartureDtResponse(MessageDto messageDto) {
+    private ResponseDto processAddressResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var departureDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticketService.setDepartureDt(departureDt, chatId);
+        accommodationService.setAddress(messageDto.getMsgText(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_ARRIVAL.name()));
+                .setState(AccommodationUtil.State.AWAIT_CHECK_IN.name()));
         return ResponseDto.builder()
-                .text(format(BotAnswer.ADD_TICKET_ARRIVAL_REQUEST))
+                .text(format(BotAnswer.ADD_ACCOMMODATION_CHECK_IN_REQUEST))
                 .build();
     }
 
-    private ResponseDto processArrivalResponse(MessageDto messageDto) {
+    private ResponseDto processCheckInResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        ticketService.setArrival(messageDto.getMsgText(), chatId);
+        var checkInDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        accommodationService.setCheckInDate(checkInDate, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_ARRIVE_DT.name()));
+                .setState(AccommodationUtil.State.AWAIT_CHECK_OUT.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_ARRIVAL_DT_REQUEST)
+                .text(BotAnswer.ADD_ACCOMMODATION_CHECK_OUT_REQUEST)
                 .build();
     }
 
-    private ResponseDto processArrivalDtResponse(MessageDto messageDto) {
+    private ResponseDto processCheckOutResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var arrivalDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticketService.setArrivalDt(arrivalDt, chatId);
+        var checkOutDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        accommodationService.setCheckOutDate(checkOutDate, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_FILE.name()));
+                .setState(AccommodationUtil.State.AWAIT_FILE.name()));
         return ResponseDto.builder()
-                .text(format(BotAnswer.ADD_TICKET_FILE_REQUEST))
-                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
-                        getCommandType().getName())))
+                .text(format(BotAnswer.ADD_ACCOMMODATION_FILE_REQUEST))
                 .build();
     }
 
     private ResponseDto processFileResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
         if (nonNull(messageDto.getDocument().getFileId())) {
-            ticketService.setFileId(messageDto.getDocument().getFileId(), chatId);
+            accommodationService.setFileId(messageDto.getDocument().getFileId(), chatId);
         }
-        var ticket = ticketService.commitNewTicket(chatId);
+        var accommodation = accommodationService.commitNewAccommodation(chatId);
         getUserStateManager().clearState(chatId);
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_FINAL_RESPONSE)
-                .keyboard(getFinalKeyboard(ticket.getTripId()))
+                .text(format(BotAnswer.ADD_ACCOMMODATION_FINAL_RESPONSE))
+                .keyboard(getFinalKeyboard(accommodation.getTripId()))
                 .build();
     }
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.ADD_TICKET;
+        return CommandType.ADD_ACCOMMODATION;
     }
 
 }

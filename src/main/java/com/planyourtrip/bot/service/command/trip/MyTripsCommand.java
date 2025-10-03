@@ -2,99 +2,62 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.HotelDto;
-import com.planyourtrip.bot.dto.NoteDto;
-import com.planyourtrip.bot.dto.TicketDto;
-import com.planyourtrip.bot.service.command.hotel.HotelService;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.note.NoteService;
-import com.planyourtrip.bot.service.command.ticket.TicketService;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.dto.domain.TripDto;
+import com.planyourtrip.bot.service.command.impl.AbstractMyCommand;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_EMPTY_RESPONSE;
-import static com.planyourtrip.bot.constant.BotAnswer.MY_TRIPS_LIST_RESPONSE;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MyTripsCommand extends AbstractCommand {
+public class MyTripsCommand extends AbstractMyCommand {
     private final TripService tripService;
-    private final TicketService ticketService;
-    private final HotelService hotelService;
-    private final NoteService noteService;
-
-    @Override
-    public ResponseDto processCommand(CommandDto commandDto) {
-        return processInitResponse(commandDto.getTelegramId());
-    }
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
         var step = callbackDto.getCallbackData().size();
         if (step == 1) {
-            return processInitResponse(callbackDto.getTelegramId());
-        } else if (step == 2) {
-            var tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
-            var trip = tripService.getTripById(tripId);
-            var tickets = ticketService.getTicketsByTripId(tripId);
-            var hotels = hotelService.getHotelsByTripId(tripId);
-            var notes = noteService.getNotesByTripId(tripId);
-            return ResponseDto.builder()
-                    .text(String.format("""
-                                    <b>%s%s</b>
-                                    Даты: %s - %s
-                                    Билеты: %s
-                                    Отели: %s
-                                    Заметки: %s
-                                    """, trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY,
-                            trip.getStartDate(), trip.getEndDate(),
-                            String.join(",",
-                                    tickets.stream()
-                                            .map(TicketDto::toString)
-                                            .toList()),
-                            String.join(",",
-                                    hotels.stream()
-                                            .map(HotelDto::toString)
-                                            .toList()),
-                            String.join(",",
-                                    notes.stream()
-                                            .map(NoteDto::toString)
-                                            .toList())))
-                    .keyboard(getActionsKeyboard(tripId))
-                    .build();
+            return prepareAnswer(callbackDto.getTelegramId());
         } else {
             return returnErrorMessage();
         }
     }
 
-    private ResponseDto processInitResponse(long telegramId) {
+
+    @Override
+    protected ResponseDto prepareAnswer(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
+        if (trips.isEmpty()) {
+            return ResponseDto.builder()
+                    .text(BotAnswer.MY_TRIPS_EMPTY_RESPONSE)
+                    .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(CommandType.NEW_TRIP.getDescription(),
+                            CommandType.NEW_TRIP.getName())))
+                    .build();
+        }
         return ResponseDto.builder()
-                .text(trips.isEmpty() ? MY_TRIPS_EMPTY_RESPONSE : MY_TRIPS_LIST_RESPONSE)
-                .keyboard(trips.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_TRIPS))
+                .text(String.format(BotAnswer.MY_TRIPS_RESPONSE,
+                        String.join(",",
+                                trips.stream()
+                                        .map(TripDto::toString)
+                                        .toList())))
+                .keyboard(getActionsKeyboard())
                 .build();
     }
 
-    private List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard(long tripId) {
+    protected List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard() {
         return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_TRIP.getDescription(),
-                        String.format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.DELETE_TRIP.getDescription(),
-                        String.format("%s/%s", CommandType.DELETE_TRIP.getName(), tripId))
+                new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_TRIP.getDescription(),
+                        CommandType.EDIT_TRIP.getName()),
+                new ReplyKeyboardBuilder.KeyboardButton(CommandType.DELETE_TRIP.getDescription(),
+                        CommandType.DELETE_TRIP.getName())
         );
+
     }
 
     @Override

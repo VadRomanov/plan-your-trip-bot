@@ -1,9 +1,9 @@
 package com.planyourtrip.bot.service.command.impl;
 
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.CommandDto;
+import com.planyourtrip.bot.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

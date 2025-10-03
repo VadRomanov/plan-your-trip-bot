@@ -1,8 +1,8 @@
-package com.planyourtrip.bot.service.command.hotel.util;
+package com.planyourtrip.bot.service.command.accommodation.util;
 
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.AccommodationType;
-import com.planyourtrip.bot.dto.HotelDto;
+import com.planyourtrip.bot.dto.domain.AccommodationType;
+import com.planyourtrip.bot.dto.domain.AccommodationDto;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,17 +15,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @UtilityClass
-public class HotelUtil {
+public class AccommodationUtil {
 
-    public static Map<Long, String> mapHotelsToMap(Collection<HotelDto> hotels) {
-        return hotels.stream()
-                .collect(Collectors.toMap(HotelDto::getId, HotelDto::toString));
+    public Map<Long, String> mapAccommodationsToMap(Collection<AccommodationDto> accommodations) {
+        return accommodations.stream()
+                .collect(Collectors.toMap(AccommodationDto::getId, AccommodationDto::toString));
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> getAccommodationTypesKeyboard(long tripId) {
+    public List<ReplyKeyboardBuilder.KeyboardButton> getAccommodationTypesKeyboard(long tripId) {
         return ReplyKeyboardBuilder.buildTypesButtons(
                 Arrays.stream(AccommodationType.values()).toList(),
-                CommandType.ADD_HOTEL,
+                CommandType.ADD_ACCOMMODATION,
                 tripId);
     }
 

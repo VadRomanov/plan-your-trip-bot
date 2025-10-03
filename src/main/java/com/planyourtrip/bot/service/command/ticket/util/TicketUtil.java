@@ -1,8 +1,8 @@
 package com.planyourtrip.bot.service.command.ticket.util;
 
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.TicketDto;
-import com.planyourtrip.bot.dto.TicketType;
+import com.planyourtrip.bot.dto.domain.TicketDto;
+import com.planyourtrip.bot.dto.domain.TicketType;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class TicketUtil {
 
-    public static Map<Long, String> mapTicketsToMap(Collection<TicketDto> tickets) {
+    public Map<Long, String> mapTicketsToMap(Collection<TicketDto> tickets) {
         return tickets.stream()
                 .collect(Collectors.toMap(TicketDto::getId, TicketDto::toString));
     }
 
-    public static List<ReplyKeyboardBuilder.KeyboardButton> getTickerTypesKeyboard(long tripId) {
+    public List<ReplyKeyboardBuilder.KeyboardButton> getTickerTypesKeyboard(long tripId) {
         return ReplyKeyboardBuilder.buildTypesButtons(
                 Arrays.stream(TicketType.values()).toList(),
                 CommandType.ADD_TICKET,

@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.trip;
 
-import com.planyourtrip.bot.dto.TripDto;
+import com.planyourtrip.bot.dto.domain.TripDto;
 
 import java.time.LocalDate;
 import java.util.Collection;

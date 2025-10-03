@@ -2,14 +2,19 @@ package com.planyourtrip.bot.constant;
 
 public class BotAnswer {
     public static final String NEW_TRIP_NAME_REQUEST = "Введите название поездки (например, \"Барселона %s\")";
-    public static final String NEW_TRIP_START_DT_REQUEST = "Введите дату начала поездки в формате дд.ММ.гггг \uD83D\uDCC5";
+    public static final String NEW_TRIP_START_DT_REQUEST =
+            "Введите дату начала поездки в формате дд.ММ.гггг \uD83D\uDCC5";
     public static final String NEW_TRIP_END_DT_REQUEST = "Введите дату конца поездки в формате дд.ММ.гггг \uD83D\uDCC5";
     public static final String NEW_TRIP_FINAL_RESPONSE =
             "Поездка <b>%s</b> создана!✅\nТеперь вы можете добавить бронирования и заметки.";
-    public static final String MY_TRIPS_LIST_RESPONSE = "Список ваших путешествий:";
     public static final String MY_TRIPS_EMPTY_RESPONSE = "У вас пока что нет ни одного путешествия.\n" +
             "Создайте свое первое путешествие ✈️";
-    public static final String DELETE_TRIP_CONFIRMATION_REQUEST = "Вы действительно хотите удалить путешествие <b>%s%s</b>?";
+    public static final String MY_TRIPS_RESPONSE = """
+            <b>Список путешествий:"
+            %s</b>"
+            """;
+    public static final String DELETE_TRIP_CONFIRMATION_REQUEST =
+            "Вы действительно хотите удалить путешествие <b>%s%s</b>?";
     public static final String DELETE_TRIP_FINAL_RESPONSE = "Путешествие удалено";
     public static final String CHOOSE_TRIP_REQUEST = "Выберите путешествие:";
 
@@ -23,29 +28,46 @@ public class BotAnswer {
     public static final String ADD_TICKET_FILE_REQUEST = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
     public static final String MY_TICKETS_EMPTY_RESPONSE = "У Вас пока что нет билетов для этой поездки";
+    public static final String MY_TICKETS_RESPONSE = """
+            <b>Список билетов:"
+            %s</b>"
+            """;
     public static final String DELETE_TICKET_CONFIRMATION_REQUEST = "Вы действительно хотите удалить билет <b>%s</b>?";
     public static final String DELETE_TICKET_FINAL_RESPONSE = "Билет удален";
     public static final String CHOOSE_TICKET_REQUEST = "Выберите билет:";
 
-    public static final String ADD_HOTEL_TYPE_REQUEST = "Выберите тип размещения";
-    public static final String ADD_HOTEL_NAME_REQUEST = "Введите название";
-    public static final String ADD_HOTEL_ADDRESS_REQUEST = "Введите адрес";
-    public static final String ADD_HOTEL_CHECK_IN_REQUEST = "Введите дату заселения в формате дд.ММ.гггг\uD83D\uDCC5";
-    public static final String ADD_HOTEL_CHECK_OUT_REQUEST = "Введите дату выезда в формате дд.ММ.гггг\uD83D\uDCC5";
-    public static final String ADD_HOTEL_FILE_REQUEST = "Добавьте подтверждение бронирования";
-    public static final String ADD_HOTEL_FINAL_RESPONSE = "Размещение добавлено!✅";
-    public static final String MY_HOTELS_EMPTY_RESPONSE = "У Вас пока что нет размещений для этой поездки";
-    public static final String DELETE_HOTEL_CONFIRMATION_REQUEST = "Вы действительно хотите удалить размещение <b>%s (%s - %s)</b>?";
-    public static final String DELETE_HOTEL_FINAL_RESPONSE = "Размещение удалено";
-    public static final String CHOOSE_HOTEL_REQUEST = "Выберите размещение:";
+    public static final String ADD_ACCOMMODATION_TYPE_REQUEST = "Выберите тип размещения";
+    public static final String ADD_ACCOMMODATION_NAME_REQUEST = "Введите название";
+    public static final String ADD_ACCOMMODATION_ADDRESS_REQUEST = "Введите адрес";
+    public static final String ADD_ACCOMMODATION_CHECK_IN_REQUEST =
+            "Введите дату заселения в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_ACCOMMODATION_CHECK_OUT_REQUEST =
+            "Введите дату выезда в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_ACCOMMODATION_FILE_REQUEST = "Добавьте подтверждение бронирования";
+    public static final String ADD_ACCOMMODATION_FINAL_RESPONSE = "Размещение добавлено!✅";
+    public static final String MY_ACCOMMODATIONS_EMPTY_RESPONSE = "У Вас пока что нет размещений для этой поездки";
+    public static final String MY_ACCOMMODATIONS_RESPONSE = """
+            <b>Список размещений:"
+            %s</b>"
+            """;
+    public static final String DELETE_ACCOMMODATION_CONFIRMATION_REQUEST =
+            "Вы действительно хотите удалить размещение <b>%s (%s - %s)</b>?";
+    public static final String DELETE_ACCOMMODATION_FINAL_RESPONSE = "Размещение удалено";
+    public static final String CHOOSE_ACCOMMODATION_REQUEST = "Выберите размещение:";
 
     public static final String ADD_NOTE_TITLE_REQUEST = "Введите заголовок заметки";
     public static final String ADD_NOTE_CONTENT_REQUEST = "Введите заметку";
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
     public static final String MY_NOTES_EMPTY_RESPONSE = "У Вас пока что нет заметок для этой поездки";
+    public static final String MY_NOTES_RESPONSE = """
+            <b>Список заметок:"
+            %s</b>"
+            """;
     public static final String DELETE_NOTE_CONFIRMATION_REQUEST = "Вы действительно хотите удалить заметку: <b>%s</b>?";
     public static final String DELETE_NOTE_FINAL_RESPONSE = "Заметка удалена";
     public static final String CHOOSE_NOTE_REQUEST = "Выберите заметку:";
+
+    public static final String CHOOSE_SUMMARY_FORMAT_REQUEST = "Выберите формат:";
 
     public static final String DELETE_CONFIRMATION_REQUEST = "Подтвердить удаление";
     public static final String EDIT_CHOOSE_FIELD_REQUEST = "Выберите, что хотели бы изменить:";

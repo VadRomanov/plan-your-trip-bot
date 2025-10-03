@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service;
 
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.ResponseDto;
 
 public interface SendService {
 

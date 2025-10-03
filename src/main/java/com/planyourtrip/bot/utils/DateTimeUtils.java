@@ -19,7 +19,7 @@ public class DateTimeUtils {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    public static LocalDate parseDate(String value) {
+    public LocalDate parseDate(String value) {
         try {
             return LocalDate.parse(value, DATE_FORMAT);
         } catch (DateTimeParseException e) {
@@ -30,7 +30,7 @@ public class DateTimeUtils {
         }
     }
 
-    public static OffsetDateTime parseDatetime(String value) {
+    public OffsetDateTime parseDatetime(String value) {
         try {
             var localDateTime = LocalDateTime.parse(value, DATE_TIME_FORMAT);
             return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);

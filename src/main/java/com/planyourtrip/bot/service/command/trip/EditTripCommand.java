@@ -2,12 +2,11 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.MessageDto;
+import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.service.command.impl.AbstractEditCommand;
 import com.planyourtrip.bot.service.command.trip.util.TripUtil;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.MessageDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -22,14 +22,8 @@ import static java.lang.String.format;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EditTripCommand extends AbstractCommand {
-
+public class EditTripCommand extends AbstractEditCommand {
     private final TripService tripService;
-
-    @Override
-    public ResponseDto processCommand(CommandDto commandDto) {
-        return requestTripId(commandDto.getTelegramId());
-    }
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
@@ -37,7 +31,7 @@ public class EditTripCommand extends AbstractCommand {
         if (step == 1) {
             return requestTripId(callbackDto.getTelegramId());
         } else if (step == 2) {
-            return processTripIdResponse(callbackDto);
+            return processEntityIdResponse(callbackDto);
         } else if (step == 3) {
             return requestNewValue(callbackDto);
         } else {
@@ -54,50 +48,43 @@ public class EditTripCommand extends AbstractCommand {
         };
     }
 
-    private ResponseDto requestTripId(long telegramId) {
-        var trips = tripService.getTripsByTelegramId(telegramId);
-        return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
-                .keyboard(trips.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.EDIT_TRIP))
-                .build();
-    }
-
-    private ResponseDto processTripIdResponse(CallbackDto callbackDto) {
+    @Override
+    protected ResponseDto processEntityIdResponse(CallbackDto callbackDto) {
         long tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
         return ResponseDto.builder()
                 .text(BotAnswer.EDIT_CHOOSE_FIELD_REQUEST)
-                .keyboard(List.of(
-                        new ReplyKeyboardBuilder.KeyboardButton(TripUtil.State.AWAIT_NAME.getValue(),
-                                String.format("%s/%s/%s", CommandType.EDIT_NOTE.getName(), tripId,
-                                        TripUtil.State.AWAIT_NAME)),
-                        new ReplyKeyboardBuilder.KeyboardButton(TripUtil.State.AWAIT_START_DT.getValue(),
-                                String.format("%s/%s/%s", CommandType.EDIT_NOTE.getName(), tripId,
-                                        TripUtil.State.AWAIT_START_DT)),
-                        new ReplyKeyboardBuilder.KeyboardButton(TripUtil.State.AWAIT_END_DT.getValue(),
-                                String.format("%s/%s/%s", CommandType.EDIT_NOTE.getName(), tripId,
-                                        TripUtil.State.AWAIT_END_DT)),
-                        new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_TICKET.getDescription(),
-                                format("%s/%s", CommandType.EDIT_TICKET.getName(), tripId)),
-                        new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_HOTEL.getDescription(),
-                                format("%s/%s", CommandType.EDIT_HOTEL.getName(), tripId)),
-                        new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_NOTE.getDescription(),
-                                format("%s/%s", CommandType.EDIT_NOTE.getName(), tripId))))
+                .keyboard(createStateKeyboard(tripId))
                 .build();
     }
 
-    private ResponseDto requestNewValue(CallbackDto callbackDto) {
+    @Override
+    protected ResponseDto requestNewValue(CallbackDto callbackDto) {
         long chatId = callbackDto.getChatId();
         long tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
         var newValue = TripUtil.State.valueOf(callbackDto.getCallbackData().get(2));
         tripService.fetchTripById(tripId, chatId);
         getUserStateManager().setState(chatId, new UserState()
-                .setResponsibleCommand(CommandType.EDIT_TRIP)
+                .setResponsibleCommand(getCommandType())
                 .setState(newValue.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_VALUE_REQUEST)
                 .build();
+    }
+
+    protected List<ReplyKeyboardBuilder.KeyboardButton> createStateKeyboard(long tripId) {
+        var buttons = new ArrayList<ReplyKeyboardBuilder.KeyboardButton>();
+        for (var state : TripUtil.State.values()) {
+            buttons.add(new ReplyKeyboardBuilder.KeyboardButton(state.getValue(),
+                    String.format("%s/%s/%s", getCommandType().getName(), tripId,
+                            state)));
+        }
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_TICKET.getDescription(),
+                format("%s/%s", CommandType.EDIT_TICKET.getName(), tripId)));
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_ACCOMMODATION.getDescription(),
+                format("%s/%s", CommandType.EDIT_ACCOMMODATION.getName(), tripId)));
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_NOTE.getDescription(),
+                format("%s/%s", CommandType.EDIT_NOTE.getName(), tripId)));
+        return buttons;
     }
 
     private ResponseDto processNameResponse(MessageDto messageDto) {
@@ -133,6 +120,16 @@ public class EditTripCommand extends AbstractCommand {
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
                 .build();
+    }
+
+    @Override
+    protected ResponseDto requestEntityId(long tripId) {
+        return null;// not implemented
+    }
+
+    @Override
+    protected List<ReplyKeyboardBuilder.KeyboardButton> createStatesKeyboard(long tripId, long id) {
+        return null;// not implemented
     }
 
     @Override

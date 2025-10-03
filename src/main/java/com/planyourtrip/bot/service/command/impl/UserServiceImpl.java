@@ -1,6 +1,6 @@
 package com.planyourtrip.bot.service.command.impl;
 
-import com.planyourtrip.bot.dto.UserDto;
+import com.planyourtrip.bot.dto.domain.UserDto;
 import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.core.UserCoreClient;
@@ -19,13 +19,12 @@ public class UserServiceImpl implements UserService {
     private final RetryTemplate retryTemplate;
 
     @Override
-    public UserDto createOrUpdateUser(UserDto userDto) {
+    public void createOrUpdateUser(UserDto userDto) {
         var response = retryTemplate.execute(retryCallback -> {
             log.debug("{} user {}", isNull(userDto.getId()) ? "Create" : "Update", userDto);
             return userClient.createOrUpdateUser(userDto);
         });
         log.debug("User {} {}", isNull(userDto.getId()) ? "created" : "updated", response);
-        return response;
     }
 
     @Override

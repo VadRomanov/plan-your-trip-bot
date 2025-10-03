@@ -2,91 +2,42 @@ package com.planyourtrip.bot.service.command.ticket;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.service.command.impl.AbstractDeleteCommand;
 import com.planyourtrip.bot.service.command.ticket.util.TicketUtil;
-import com.planyourtrip.bot.service.command.trip.TripService;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DeleteTicketCommand extends AbstractCommand {
-    private final TripService tripService;
+public class DeleteTicketCommand extends AbstractDeleteCommand {
     private final TicketService ticketService;
 
     @Override
-    public ResponseDto processCommand(CommandDto commandDto) {
-        return requestTripId(commandDto.getTelegramId());
-    }
-
-    @Override
-    public ResponseDto processCallback(CallbackDto callbackDto) {
-        var step = callbackDto.getCallbackData().size();
-        if (step == 1) {
-            return requestTripId(callbackDto.getTelegramId());
-        } else if (step == 2) {
-            return requestTicketId(Long.parseLong(callbackDto.getCallbackData().get(1)));
-        } else if (step == 3) {
-            return requestConfirmation(Long.parseLong(callbackDto.getCallbackData().get(2)));
-        } else if (step == 4) {
-            return processConfirmation(callbackDto);
-        } else {
-            return returnErrorMessage();
-        }
-    }
-
-    private ResponseDto requestTripId(long telegramId) {
-        var trips = tripService.getTripsByTelegramId(telegramId);
-        return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
-                .keyboard(trips.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.DELETE_TICKET))
-                .build();
-    }
-
-    private ResponseDto requestTicketId(long tripId) {
+    protected ResponseDto requestEntityId(long tripId) {
         var tickets = ticketService.getTicketsByTripId(tripId);
         return ResponseDto.builder()
                 .text(tickets.isEmpty() ? BotAnswer.MY_TICKETS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TICKET_REQUEST)
                 .keyboard(tickets.isEmpty()
                         ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_TICKET)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(TicketUtil.mapTicketsToMap(tickets), tripId,
-                        CommandType.DELETE_TICKET))
+                        getCommandType()))
                 .build();
     }
 
-    private ResponseDto requestConfirmation(long ticketId) {
-        var ticket = ticketService.getTicketById(ticketId);
-        return ResponseDto.builder()
-                .text(String.format(BotAnswer.DELETE_TICKET_CONFIRMATION_REQUEST, ticket))
-                .keyboard(List.of(
-                        new ReplyKeyboardBuilder.KeyboardButton(
-                                BotAnswer.DELETE_CONFIRMATION_REQUEST,
-                                String.format("%s/%s/%s/%s", CommandType.DELETE_TICKET.getName(), ticket.getTripId(),
-                                        ticket.getId(), BotAnswer.CONFIRMED)),
-                        new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.CANCEL, CommandType.CANCEL.getName())))
-                .build();
+    @Override
+    protected ResponseDto requestConfirmation(long id) {
+        var ticket = ticketService.getTicketById(id);
+        var text = String.format(BotAnswer.DELETE_TICKET_CONFIRMATION_REQUEST, ticket);
+        return requestConfirmation(text, ticket.getTripId(), id);
     }
 
-    private ResponseDto processConfirmation(CallbackDto callbackDto) {
-        if (callbackDto.getCallbackData().get(3).equals(BotAnswer.CONFIRMED)) {
-            return doDelete(Long.parseLong(callbackDto.getCallbackData().get(2)));
-        } else {
-            return returnErrorMessage();
-        }
-    }
-
-    private ResponseDto doDelete(long ticketId) {
-        ticketService.deleteTicket(ticketId);
+    @Override
+    protected ResponseDto doDelete(long id) {
+        ticketService.deleteTicket(id);
         return ResponseDto.builder()
                 .text(BotAnswer.DELETE_TICKET_FINAL_RESPONSE)
                 .build();

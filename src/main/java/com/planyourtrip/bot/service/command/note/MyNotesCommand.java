@@ -2,93 +2,36 @@ package com.planyourtrip.bot.service.command.note;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.dto.NoteDto;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.trip.TripService;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
-import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
+import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.dto.domain.NoteDto;
+import com.planyourtrip.bot.service.command.impl.AbstractMyCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static java.lang.String.format;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MyNotesCommand extends AbstractCommand {
-    private final TripService tripService;
+public class MyNotesCommand extends AbstractMyCommand {
     private final NoteService noteService;
 
     @Override
-    public ResponseDto processCommand(CommandDto commandDto) {
-        return processInitResponse(commandDto.getTelegramId());
-    }
-
-    @Override
-    public ResponseDto processCallback(CallbackDto callbackDto) {
-        var step = callbackDto.getCallbackData().size();
-        if (step == 1) {
-            return processInitResponse(callbackDto.getTelegramId());
-        } else if (step == 2) {
-            return prepareAnswer(Long.parseLong(callbackDto.getCallbackData().get(1)));
-        } else {
-            return returnErrorMessage();
-        }
-    }
-
-    private ResponseDto processInitResponse(long telegramId) {
-        var trips = tripService.getTripsByTelegramId(telegramId);
-        return ResponseDto.builder()
-                .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
-                .keyboard(trips.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
-                        : ReplyKeyboardBuilder.buildTripsButtons(trips, CommandType.MY_NOTES))
-                .build();
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard(long tripId) {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_NOTE.getDescription(),
-                        String.format("%s/%s", CommandType.EDIT_NOTE.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.DELETE_NOTE.getDescription(),
-                        String.format("%s/%s", CommandType.DELETE_NOTE.getName(), tripId))
-        );
-    }
-
-    private ResponseDto prepareAnswer(long tripId) {
+    protected ResponseDto prepareAnswer(long tripId) {
         var notes = noteService.getNotesByTripId(tripId);
         if (notes.isEmpty()) {
             return ResponseDto.builder()
                     .text(BotAnswer.MY_NOTES_EMPTY_RESPONSE)
-                    .keyboard(getAddNoteKeyboard(tripId))
+                    .keyboard(getAddKeyboard(tripId, CommandType.ADD_NOTE))
                     .build();
         }
         return ResponseDto.builder()
-                .text(String.format("""
-                                <b>Список заметок:
-                                %s</b>
-                                """,
+                .text(String.format(BotAnswer.MY_NOTES_RESPONSE,
                         String.join(",",
                                 notes.stream()
                                         .map(NoteDto::toString)
                                         .toList())))
-                .keyboard(getActionsKeyboard(tripId))
+                .keyboard(getActionsKeyboard(tripId, CommandType.EDIT_NOTE, CommandType.DELETE_NOTE))
                 .build();
-    }
-
-    private List<ReplyKeyboardBuilder.KeyboardButton> getAddNoteKeyboard(long tripId) {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_NOTE.getDescription(),
-                        format("%s/%s", CommandType.ADD_NOTE.getName(), tripId))
-        );
     }
 
     @Override

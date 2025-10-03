@@ -5,10 +5,10 @@ import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.service.command.UserService;
 import com.planyourtrip.bot.service.command.impl.AbstractCommand;
 import com.planyourtrip.bot.service.command.trip.util.TripUtil;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.MessageDto;
-import com.planyourtrip.bot.service.dto.ResponseDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.CommandDto;
+import com.planyourtrip.bot.dto.MessageDto;
+import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
@@ -50,7 +50,7 @@ public class NewTripCommand extends AbstractCommand {
 
     private ResponseDto processInitResponse(long chatId) {
         getUserStateManager().setState(chatId,
-                new UserState(CommandType.NEW_TRIP, TripUtil.State.AWAIT_NAME.name(), null));
+                new UserState(getCommandType(), TripUtil.State.AWAIT_NAME.name(), null));
         return ResponseDto.builder()
                 .text(format(BotAnswer.NEW_TRIP_NAME_REQUEST, LocalDateTime.now().getYear()))
                 .build();
@@ -61,7 +61,7 @@ public class NewTripCommand extends AbstractCommand {
         long chatId = messageDto.getChatId();
         tripService.createTrip(messageDto.getMsgText(), user.getId(), chatId);
         getUserStateManager().setState(chatId, new UserState()
-                .setResponsibleCommand(CommandType.NEW_TRIP)
+                .setResponsibleCommand(getCommandType())
                 .setState(TripUtil.State.AWAIT_START_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_START_DT_REQUEST)
@@ -73,7 +73,7 @@ public class NewTripCommand extends AbstractCommand {
         var startDt = DateTimeUtils.parseDate(messageDto.getMsgText());
         tripService.setStartDt(startDt, chatId);
         getUserStateManager().setState(chatId, new UserState()
-                .setResponsibleCommand(CommandType.NEW_TRIP)
+                .setResponsibleCommand(getCommandType())
                 .setState(TripUtil.State.AWAIT_END_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_END_DT_REQUEST)
@@ -92,14 +92,15 @@ public class NewTripCommand extends AbstractCommand {
                 .build();
     }
 
-    private List<ReplyKeyboardBuilder.KeyboardButton> getFinalKeyboard(long tripId) {
+    @Override
+    protected List<ReplyKeyboardBuilder.KeyboardButton> getFinalKeyboard(long tripId) {
         return List.of(
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.ADD_TICKET.getDescription(),
                         format("%s/%s", CommandType.ADD_TICKET.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_HOTEL.getDescription(),
-                        format("%s/%s", CommandType.ADD_HOTEL.getName(), tripId)),
+                        CommandType.ADD_ACCOMMODATION.getDescription(),
+                        format("%s/%s", CommandType.ADD_ACCOMMODATION.getName(), tripId)),
                 new ReplyKeyboardBuilder.KeyboardButton(
                         CommandType.ADD_NOTE.getDescription(),
                         format("%s/%s", CommandType.ADD_NOTE.getName(), tripId)),

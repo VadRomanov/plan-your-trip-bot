@@ -1,4 +1,4 @@
-package com.planyourtrip.bot.service.dto;
+package com.planyourtrip.bot.dto;
 
 import lombok.Getter;
 import lombok.Setter;

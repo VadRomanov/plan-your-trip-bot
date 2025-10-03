@@ -1,9 +1,9 @@
 package com.planyourtrip.bot.service.mapper;
 
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.dto.CallbackDto;
-import com.planyourtrip.bot.service.dto.CommandDto;
-import com.planyourtrip.bot.service.dto.MessageDto;
+import com.planyourtrip.bot.dto.CallbackDto;
+import com.planyourtrip.bot.dto.CommandDto;
+import com.planyourtrip.bot.dto.MessageDto;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.CallbackDataUtil;
 import org.springframework.stereotype.Component;
