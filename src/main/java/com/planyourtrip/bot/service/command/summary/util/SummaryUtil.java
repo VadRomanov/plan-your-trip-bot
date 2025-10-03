@@ -11,7 +11,7 @@ public class SummaryUtil {
     @RequiredArgsConstructor
     public enum Format {
         PDF("PDF"),
-        PLAIN_TEXT("Текст");
+        TEXT("Текст");
 
         private final String value;
     }

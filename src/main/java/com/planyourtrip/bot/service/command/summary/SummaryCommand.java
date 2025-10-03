@@ -43,7 +43,7 @@ public class SummaryCommand extends AbstractCommand {
     private ResponseDto processFormatResponse(CallbackDto callbackDto) {
         return switch (SummaryUtil.Format.valueOf(callbackDto.getCallbackData().get(2))) {
             case PDF -> processPdfResponse(callbackDto);
-            case PLAIN_TEXT -> processPlainTextResponse(callbackDto);
+            case TEXT -> processTextResponse(callbackDto);
         };
     }
 
@@ -55,7 +55,7 @@ public class SummaryCommand extends AbstractCommand {
                 .build();
     }
 
-    private ResponseDto processPlainTextResponse(CallbackDto callbackDto) {
+    private ResponseDto processTextResponse(CallbackDto callbackDto) {
         var tripId = Long.parseLong(callbackDto.getCallbackData().get(1));
         var response = summaryService.getTripSummaryText(tripId);
         return ResponseDto.builder()
