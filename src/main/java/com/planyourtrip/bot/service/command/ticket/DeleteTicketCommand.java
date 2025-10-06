@@ -22,7 +22,7 @@ public class DeleteTicketCommand extends AbstractDeleteCommand {
         return ResponseDto.builder()
                 .text(tickets.isEmpty() ? BotAnswer.MY_TICKETS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TICKET_REQUEST)
                 .keyboard(tickets.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_TICKET)
+                        ? ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_TICKET)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(TicketUtil.mapTicketsToMap(tickets), tripId,
                         getCommandType()))
                 .build();

@@ -12,6 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import java.util.Arrays;
 
+import static java.util.Objects.nonNull;
+
 @Component
 public class TelegramMapper {
 
@@ -21,12 +23,13 @@ public class TelegramMapper {
     }
 
     public MessageDto toResponseMessageDto(Message message, UserState state) {
+        var text = message.getText();
         return MessageDto.builder()
                 .commandType(state.getResponsibleCommand())
                 .telegramId(message.getFrom().getId())
                 .chatId(message.getChatId())
                 .userName(message.getFrom().getUserName())
-                .msgText(message.getText().trim())
+                .msgText(nonNull(text) ? text.trim() : null)
                 .document(message.getDocument())
                 .state(state)
                 .messageId(message.getMessageId())
@@ -51,13 +54,13 @@ public class TelegramMapper {
                 .build();
     }
 
-  public CommandDto toDefaultCommandDto(CallbackQuery callbackQuery) {
-    return CommandDto.builder()
-        .commandType(CommandType.DEFAULT)
-        .telegramId(callbackQuery.getFrom().getId())
-        .chatId(callbackQuery.getMessage().getChatId())
-        .build();
-  }
+    public CommandDto toDefaultCommandDto(CallbackQuery callbackQuery) {
+        return CommandDto.builder()
+                .commandType(CommandType.DEFAULT)
+                .telegramId(callbackQuery.getFrom().getId())
+                .chatId(callbackQuery.getMessage().getChatId())
+                .build();
+    }
 
     public CommandDto toDefaultCommandDto(Message message) {
         return createCommandDto(CommandType.DEFAULT, message);

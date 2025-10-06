@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -78,12 +76,8 @@ public class EditTripCommand extends AbstractEditCommand {
                     String.format("%s/%s/%s", getCommandType().getName(), tripId,
                             state)));
         }
-        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_TICKET.getDescription(),
-                format("%s/%s", CommandType.EDIT_TICKET.getName(), tripId)));
-        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_ACCOMMODATION.getDescription(),
-                format("%s/%s", CommandType.EDIT_ACCOMMODATION.getName(), tripId)));
-        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_NOTE.getDescription(),
-                format("%s/%s", CommandType.EDIT_NOTE.getName(), tripId)));
+        buttons.addAll(ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.EDIT_TICKET,
+                CommandType.EDIT_ACCOMMODATION, CommandType.EDIT_NOTE));
         return buttons;
     }
 
@@ -95,6 +89,7 @@ public class EditTripCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -107,6 +102,7 @@ public class EditTripCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -119,6 +115,7 @@ public class EditTripCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 

@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ReplyKeyboardBuilder {
     private static final int DEFAULT_BUTTON_PER_ROW_COUNT = 2;
 
     public List<ReplyKeyboardBuilder.KeyboardButton> buildTripsButtons(Collection<TripDto> trips,
-                                                                              CommandType commandType) {
+                                                                       CommandType commandType) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var trip : trips) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
@@ -35,8 +36,8 @@ public class ReplyKeyboardBuilder {
     }
 
     public List<ReplyKeyboardBuilder.KeyboardButton> buildEntitiesButtons(Map<Long, String> entities,
-                                                                                 long tripId,
-                                                                                 CommandType commandType) {
+                                                                          long tripId,
+                                                                          CommandType commandType) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var entity : entities.entrySet()) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
@@ -49,8 +50,8 @@ public class ReplyKeyboardBuilder {
     }
 
     public List<ReplyKeyboardBuilder.KeyboardButton> buildTypesButtons(Collection<? extends AbstractType> types,
-                                                                              CommandType commandType,
-                                                                              long id) {
+                                                                       CommandType commandType,
+                                                                       long id) {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var type : types) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
@@ -99,11 +100,14 @@ public class ReplyKeyboardBuilder {
         return keyboard;
     }
 
-    public List<ReplyKeyboardBuilder.KeyboardButton> buildNewEntityButton(CommandType newEntityType) {
-        return List.of(new ReplyKeyboardBuilder.KeyboardButton(
-                newEntityType.getDescription(),
-                newEntityType.getName())
-        );
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildActionToTripButton(long tripId, CommandType... actionTypes) {
+        List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
+        Arrays.stream(actionTypes)
+                .map(actionType -> new ReplyKeyboardBuilder.KeyboardButton(
+                        actionType.getDescription(),
+                        String.format("%s/%s", actionType.getName(), tripId)))
+                .forEach(buttons::add);
+        return buttons;
     }
 
     public record KeyboardButton(String text, String callbackData) {

@@ -5,6 +5,7 @@ import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.dto.domain.NoteDto;
 import com.planyourtrip.bot.service.command.impl.AbstractMyCommand;
+import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class MyNotesCommand extends AbstractMyCommand {
         if (notes.isEmpty()) {
             return ResponseDto.builder()
                     .text(BotAnswer.MY_NOTES_EMPTY_RESPONSE)
-                    .keyboard(getAddKeyboard(tripId, CommandType.ADD_NOTE))
+                    .keyboard(ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_NOTE))
                     .build();
         }
         return ResponseDto.builder()
@@ -30,7 +31,8 @@ public class MyNotesCommand extends AbstractMyCommand {
                                 notes.stream()
                                         .map(NoteDto::toString)
                                         .toList())))
-                .keyboard(getActionsKeyboard(tripId, CommandType.EDIT_NOTE, CommandType.DELETE_NOTE))
+                .keyboard(ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.EDIT_NOTE,
+                        CommandType.DELETE_NOTE))
                 .build();
     }
 

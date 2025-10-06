@@ -29,5 +29,6 @@ public interface AccommodationCoreClient {
     AccommodationDto getAccommodationById(@Param Long id);
 
     @RequestLine("PUT /{id}")
+    @Headers("Content-Type: application/json")
     AccommodationDto updateAccommodation(@Param Long id, @RequestBody AccommodationDto accommodationDto);
 }

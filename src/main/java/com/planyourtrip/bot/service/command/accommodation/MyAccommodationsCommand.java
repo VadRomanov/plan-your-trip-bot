@@ -5,6 +5,7 @@ import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.dto.domain.AccommodationDto;
 import com.planyourtrip.bot.service.command.impl.AbstractMyCommand;
+import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class MyAccommodationsCommand extends AbstractMyCommand {
         if (accommodations.isEmpty()) {
             return ResponseDto.builder()
                     .text(BotAnswer.MY_ACCOMMODATIONS_EMPTY_RESPONSE)
-                    .keyboard(getAddKeyboard(tripId, CommandType.ADD_ACCOMMODATION))
+                    .keyboard(ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_ACCOMMODATION))
                     .build();
         }
         return ResponseDto.builder()
@@ -30,7 +31,8 @@ public class MyAccommodationsCommand extends AbstractMyCommand {
                                 accommodations.stream()
                                         .map(AccommodationDto::toString)
                                         .toList())))
-                .keyboard(getActionsKeyboard(tripId, CommandType.EDIT_ACCOMMODATION, CommandType.DELETE_ACCOMMODATION))
+                .keyboard(ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.EDIT_ACCOMMODATION,
+                        CommandType.DELETE_ACCOMMODATION))
                 .build();
     }
 

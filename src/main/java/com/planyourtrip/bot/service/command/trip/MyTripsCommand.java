@@ -4,7 +4,6 @@ import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
 import com.planyourtrip.bot.dto.CallbackDto;
 import com.planyourtrip.bot.dto.ResponseDto;
-import com.planyourtrip.bot.dto.domain.TripDto;
 import com.planyourtrip.bot.service.command.impl.AbstractMyCommand;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +22,25 @@ public class MyTripsCommand extends AbstractMyCommand {
     public ResponseDto processCallback(CallbackDto callbackDto) {
         var step = callbackDto.getCallbackData().size();
         if (step == 1) {
-            return prepareAnswer(callbackDto.getTelegramId());
+            return requestTripIdAnswer(callbackDto.getTelegramId());
+        } else if (step == 2) {
+            return prepareAnswer(Long.parseLong(callbackDto.getCallbackData().get(1)));
         } else {
             return returnErrorMessage();
         }
     }
 
-
     @Override
-    protected ResponseDto prepareAnswer(long telegramId) {
+    protected ResponseDto prepareAnswer(long id) {
+        var trip = tripService.getTripById(id);
+        return ResponseDto.builder()
+                .text(trip.toString())
+                .keyboard(ReplyKeyboardBuilder.buildActionToTripButton(id, CommandType.EDIT_TRIP,
+                        CommandType.DELETE_TRIP))
+                .build();
+    }
+
+    private ResponseDto requestTripIdAnswer(long telegramId) {
         var trips = tripService.getTripsByTelegramId(telegramId);
         if (trips.isEmpty()) {
             return ResponseDto.builder()
@@ -41,23 +50,9 @@ public class MyTripsCommand extends AbstractMyCommand {
                     .build();
         }
         return ResponseDto.builder()
-                .text(String.format(BotAnswer.MY_TRIPS_RESPONSE,
-                        String.join(",",
-                                trips.stream()
-                                        .map(TripDto::toString)
-                                        .toList())))
-                .keyboard(getActionsKeyboard())
+                .text(BotAnswer.MY_TRIPS_RESPONSE)
+                .keyboard(ReplyKeyboardBuilder.buildTripsButtons(trips, getCommandType()))
                 .build();
-    }
-
-    protected List<ReplyKeyboardBuilder.KeyboardButton> getActionsKeyboard() {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(CommandType.EDIT_TRIP.getDescription(),
-                        CommandType.EDIT_TRIP.getName()),
-                new ReplyKeyboardBuilder.KeyboardButton(CommandType.DELETE_TRIP.getDescription(),
-                        CommandType.DELETE_TRIP.getName())
-        );
-
     }
 
     @Override

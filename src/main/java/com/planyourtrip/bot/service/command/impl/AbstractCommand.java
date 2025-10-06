@@ -24,7 +24,6 @@ import java.util.List;
 import static com.planyourtrip.bot.constant.CommandType.HELP;
 import static com.planyourtrip.bot.constant.CommandType.MY_TRIPS;
 import static com.planyourtrip.bot.constant.CommandType.NEW_TRIP;
-import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -108,20 +107,13 @@ public abstract class AbstractCommand implements Command {
         return ResponseDto.builder()
                 .text(trips.isEmpty() ? BotAnswer.MY_TRIPS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TRIP_REQUEST)
                 .keyboard(trips.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.NEW_TRIP)
+                        ? buildNewTripButton()
                         : ReplyKeyboardBuilder.buildTripsButtons(trips, getCommandType()))
                 .build();
     }
 
     protected List<ReplyKeyboardBuilder.KeyboardButton> getFinalKeyboard(long tripId) {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_TRIP.getDescription(),
-                        format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.MY_TRIPS.getDescription(),
-                        CommandType.MY_TRIPS.getName())
-        );
+        return ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.EDIT_TRIP, CommandType.MY_TRIPS);
     }
 
     protected List<ReplyKeyboardBuilder.KeyboardButton> defaultKeyboard() {
@@ -134,4 +126,12 @@ public abstract class AbstractCommand implements Command {
                         HELP.getDescription(), HELP.getName())
         );
     }
+
+    private List<ReplyKeyboardBuilder.KeyboardButton> buildNewTripButton() {
+        return List.of(new ReplyKeyboardBuilder.KeyboardButton(
+                CommandType.NEW_TRIP.getDescription(),
+                CommandType.NEW_TRIP.getName())
+        );
+    }
+
 }

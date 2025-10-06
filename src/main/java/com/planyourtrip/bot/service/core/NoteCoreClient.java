@@ -29,5 +29,6 @@ public interface NoteCoreClient {
     NoteDto getNoteById(@Param Long id);
 
     @RequestLine("PUT /{id}")
+    @Headers("Content-Type: application/json")
     NoteDto updateNote(@Param Long id, @RequestBody NoteDto noteDto);
 }

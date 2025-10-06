@@ -2,13 +2,13 @@ package com.planyourtrip.bot.service.command.trip;
 
 import com.planyourtrip.bot.constant.BotAnswer;
 import com.planyourtrip.bot.constant.CommandType;
-import com.planyourtrip.bot.service.command.UserService;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
-import com.planyourtrip.bot.service.command.trip.util.TripUtil;
 import com.planyourtrip.bot.dto.CallbackDto;
 import com.planyourtrip.bot.dto.CommandDto;
 import com.planyourtrip.bot.dto.MessageDto;
 import com.planyourtrip.bot.dto.ResponseDto;
+import com.planyourtrip.bot.service.command.UserService;
+import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.trip.util.TripUtil;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
 import com.planyourtrip.bot.utils.ReplyKeyboardBuilder;
@@ -94,23 +94,13 @@ public class NewTripCommand extends AbstractCommand {
 
     @Override
     protected List<ReplyKeyboardBuilder.KeyboardButton> getFinalKeyboard(long tripId) {
-        return List.of(
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_TICKET.getDescription(),
-                        format("%s/%s", CommandType.ADD_TICKET.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_ACCOMMODATION.getDescription(),
-                        format("%s/%s", CommandType.ADD_ACCOMMODATION.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.ADD_NOTE.getDescription(),
-                        format("%s/%s", CommandType.ADD_NOTE.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.EDIT_TRIP.getDescription(),
-                        format("%s/%s", CommandType.EDIT_TRIP.getName(), tripId)),
-                new ReplyKeyboardBuilder.KeyboardButton(
-                        CommandType.MY_TRIPS.getDescription(),
-                        CommandType.MY_TRIPS.getName())
+        var buttons = ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_TICKET,
+                CommandType.ADD_ACCOMMODATION, CommandType.ADD_NOTE, CommandType.EDIT_TRIP);
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(
+                CommandType.MY_TRIPS.getDescription(),
+                CommandType.MY_TRIPS.getName())
         );
+        return buttons;
     }
 
     @Override

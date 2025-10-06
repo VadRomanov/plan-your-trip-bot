@@ -29,6 +29,7 @@ public interface TripCoreClient {
     Void deleteTrip(@Param Long id);
 
     @RequestLine("PUT /{id}")
+    @Headers("Content-Type: application/json")
     TripDto updateTrip(@Param Long id, @RequestBody TripDto tripDto);
 
     @RequestLine("GET /user/{telegramId}")

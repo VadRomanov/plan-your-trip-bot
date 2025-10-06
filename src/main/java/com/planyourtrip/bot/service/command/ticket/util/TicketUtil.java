@@ -35,8 +35,10 @@ public class TicketUtil {
         AWAIT_TYPE("Тип"),
         AWAIT_DEPARTURE("Место отправления"),
         AWAIT_ARRIVAL("Место прибытия"),
-        AWAIT_DEPART_DT("Дата и время отправления"),
-        AWAIT_ARRIVE_DT("Дата и время прибытия"),
+        AWAIT_DEPART_DATE("Дата отправления"),
+        AWAIT_DEPART_TIME("Время отправления"),
+        AWAIT_ARRIVE_DATE("Дата прибытия"),
+        AWAIT_ARRIVE_TIME("Время прибытия"),
         AWAIT_FILE("Файл");
 
         private final String value;

@@ -23,7 +23,7 @@ public class DeleteAccommodationCommand extends AbstractDeleteCommand {
                 .text(accommodations.isEmpty() ? BotAnswer.MY_ACCOMMODATIONS_EMPTY_RESPONSE :
                         BotAnswer.CHOOSE_ACCOMMODATION_REQUEST)
                 .keyboard(accommodations.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_ACCOMMODATION)
+                        ? ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_ACCOMMODATION)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(
                         AccommodationUtil.mapAccommodationsToMap(accommodations), tripId,
                         getCommandType()))

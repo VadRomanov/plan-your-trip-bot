@@ -36,7 +36,7 @@ public class EditNoteCommand extends AbstractEditCommand {
         return ResponseDto.builder()
                 .text(notes.isEmpty() ? BotAnswer.MY_NOTES_EMPTY_RESPONSE : BotAnswer.CHOOSE_NOTE_REQUEST)
                 .keyboard(notes.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_NOTE)
+                        ? ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_NOTE)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(NoteUtil.mapNotesToMap(notes), tripId,
                         getCommandType()))
                 .build();
@@ -75,6 +75,7 @@ public class EditNoteCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -86,6 +87,7 @@ public class EditNoteCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 

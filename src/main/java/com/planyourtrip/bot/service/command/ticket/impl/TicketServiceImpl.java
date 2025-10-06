@@ -6,11 +6,13 @@ import com.planyourtrip.bot.exception.BusinessException;
 import com.planyourtrip.bot.exception.ResponseCode;
 import com.planyourtrip.bot.service.command.ticket.TicketService;
 import com.planyourtrip.bot.service.core.TicketCoreClient;
+import com.planyourtrip.bot.utils.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,9 +51,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void setDepartureDt(OffsetDateTime departureDt, long chatId) {
+    public void setDepartDate(LocalDate date, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
-        log.debug("Set ticket departure datetime {}, chatId {}", departureDt, chatId);
+        log.debug("Set ticket departure date {}, chatId {}", date, chatId);
+        ticket.setDepartureTime(DateTimeUtils.toOffsetDateTime(date));
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
+    }
+
+    @Override
+    public void setDepartTime(LocalTime time, long chatId) {
+        var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        log.debug("Set ticket departure time {}, chatId {}", time, chatId);
+        var departureDt = DateTimeUtils.addTime(ticket.getDepartureTime(), time);
         if (nonNull(ticket.getArrivalTime()) && ticket.getArrivalTime().isBefore(departureDt)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
@@ -61,9 +72,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void setArrivalDt(OffsetDateTime arrivalDt, long chatId) {
+    public void setArriveDate(LocalDate date, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
-        log.debug("Set ticket arrival datetime {}, chatId {}", arrivalDt, chatId);
+        log.debug("Set ticket arrival date {}, chatId {}", date, chatId);
+        ticket.setArrivalTime(DateTimeUtils.toOffsetDateTime(date));
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
+    }
+
+    @Override
+    public void setArriveTime(LocalTime time, long chatId) {
+        var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        log.debug("Set ticket arrival time {}, chatId {}", time, chatId);
+        var arrivalDt = DateTimeUtils.addTime(ticket.getArrivalTime(), time);
         if (nonNull(ticket.getDepartureTime()) && ticket.getDepartureTime().isAfter(arrivalDt)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();

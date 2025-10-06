@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +17,7 @@ import java.util.List;
 @UtilityClass
 public class DateTimeUtils {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     public LocalDate parseDate(String value) {
         try {
@@ -30,15 +30,29 @@ public class DateTimeUtils {
         }
     }
 
-    public OffsetDateTime parseDatetime(String value) {
+    public LocalTime parseTime(String value) {
         try {
-            var localDateTime = LocalDateTime.parse(value, DATE_TIME_FORMAT);
-            return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+            return LocalTime.parse(value, TIME_FORMAT);
         } catch (DateTimeParseException e) {
-            log.error("Error wile parsing datetime {}", e.getMessage(), e);
+            log.error("Error wile parsing time {}", e.getMessage(), e);
             throw BusinessException.builder(ResponseCode.INVALID_DATE_FORMATE)
-                    .params(List.of(DATE_TIME_FORMAT.toString(), LocalDate.now().format(DATE_TIME_FORMAT)))
+                    .params(List.of(DATE_FORMAT.toString(), LocalDate.now().format(DATE_FORMAT)))
                     .build();
         }
+    }
+
+    public OffsetDateTime toOffsetDateTime(LocalDate date) {
+        return date.atStartOfDay().atOffset(ZoneOffset.UTC);
+    }
+
+    public OffsetDateTime addTime(OffsetDateTime dateTime, LocalTime time) {
+        return dateTime.withHour(time.getHour())
+                .withMinute(time.getMinute());
+    }
+
+    public OffsetDateTime addDate(OffsetDateTime dateTime, LocalDate date) {
+        return dateTime.withDayOfMonth(date.getDayOfMonth())
+                .withMonth(date.getMonthValue())
+                .withYear(date.getYear());
     }
 }

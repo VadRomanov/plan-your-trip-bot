@@ -9,10 +9,7 @@ public class BotAnswer {
             "Поездка <b>%s</b> создана!✅\nТеперь вы можете добавить бронирования и заметки.";
     public static final String MY_TRIPS_EMPTY_RESPONSE = "У вас пока что нет ни одного путешествия.\n" +
             "Создайте свое первое путешествие ✈️";
-    public static final String MY_TRIPS_RESPONSE = """
-            <b>Список путешествий:"
-            %s</b>"
-            """;
+    public static final String MY_TRIPS_RESPONSE = "Ваши путешествия:";
     public static final String DELETE_TRIP_CONFIRMATION_REQUEST =
             "Вы действительно хотите удалить путешествие <b>%s%s</b>?";
     public static final String DELETE_TRIP_FINAL_RESPONSE = "Путешествие удалено";
@@ -20,17 +17,21 @@ public class BotAnswer {
 
     public static final String ADD_TICKET_TYPE_REQUEST = "Выберите тип билета";
     public static final String ADD_TICKET_DEPARTURE_REQUEST = "Введите место отправления";
-    public static final String ADD_TICKET_DEPARTURE_DT_REQUEST =
-            "Введите дату и время отправления в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
+    public static final String ADD_TICKET_DEPARTURE_DATE_REQUEST =
+            "Введите дату отправления в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_TICKET_DEPARTURE_TIME_REQUEST =
+            "Введите время отправления в формате ЧЧ:мм\uD83D\uDCC5";
     public static final String ADD_TICKET_ARRIVAL_REQUEST = "Введите место назначения";
-    public static final String ADD_TICKET_ARRIVAL_DT_REQUEST =
-            "Введите дату и время прибытия в формате дд.ММ.гггг ЧЧ:мм\uD83D\uDCC5";
+    public static final String ADD_TICKET_ARRIVAL_DATE_REQUEST =
+            "Введите дату прибытия в формате дд.ММ.гггг\uD83D\uDCC5";
+    public static final String ADD_TICKET_ARRIVAL_TIME_REQUEST =
+            "Введите время прибытия в формате ЧЧ:мм\uD83D\uDCC5";
     public static final String ADD_TICKET_FILE_REQUEST = "Добавьте билет";
     public static final String ADD_TICKET_FINAL_RESPONSE = "Билет добавлен!✅";
     public static final String MY_TICKETS_EMPTY_RESPONSE = "У Вас пока что нет билетов для этой поездки";
     public static final String MY_TICKETS_RESPONSE = """
-            <b>Список билетов:"
-            %s</b>"
+            <b>Список билетов:</b>
+            %s
             """;
     public static final String DELETE_TICKET_CONFIRMATION_REQUEST = "Вы действительно хотите удалить билет <b>%s</b>?";
     public static final String DELETE_TICKET_FINAL_RESPONSE = "Билет удален";
@@ -47,8 +48,8 @@ public class BotAnswer {
     public static final String ADD_ACCOMMODATION_FINAL_RESPONSE = "Размещение добавлено!✅";
     public static final String MY_ACCOMMODATIONS_EMPTY_RESPONSE = "У Вас пока что нет размещений для этой поездки";
     public static final String MY_ACCOMMODATIONS_RESPONSE = """
-            <b>Список размещений:"
-            %s</b>"
+            <b>Список размещений:</b>
+            %s
             """;
     public static final String DELETE_ACCOMMODATION_CONFIRMATION_REQUEST =
             "Вы действительно хотите удалить размещение <b>%s (%s - %s)</b>?";
@@ -60,8 +61,8 @@ public class BotAnswer {
     public static final String ADD_NOTE_FINAL_RESPONSE = "Заметка добавлена!✅";
     public static final String MY_NOTES_EMPTY_RESPONSE = "У Вас пока что нет заметок для этой поездки";
     public static final String MY_NOTES_RESPONSE = """
-            <b>Список заметок:"
-            %s</b>"
+            <b>Список заметок:</b>
+            %s
             """;
     public static final String DELETE_NOTE_CONFIRMATION_REQUEST = "Вы действительно хотите удалить заметку: <b>%s</b>?";
     public static final String DELETE_NOTE_FINAL_RESPONSE = "Заметка удалена";

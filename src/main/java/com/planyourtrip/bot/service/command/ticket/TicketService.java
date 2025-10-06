@@ -2,7 +2,8 @@ package com.planyourtrip.bot.service.command.ticket;
 
 import com.planyourtrip.bot.dto.domain.TicketDto;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 
 public interface TicketService {
@@ -13,9 +14,13 @@ public interface TicketService {
 
     void setArrival(String arrival, long chatId);
 
-    void setDepartureDt(OffsetDateTime departureDt, long chatId);
+    void setDepartDate(LocalDate date, long chatId);
 
-    void setArrivalDt(OffsetDateTime arrivalDt, long chatId);
+    void setDepartTime(LocalTime time, long chatId);
+
+    void setArriveDate(LocalDate date, long chatId);
+
+    void setArriveTime(LocalTime time, long chatId);
 
     void setFileId(String fileId, long chatId);
 

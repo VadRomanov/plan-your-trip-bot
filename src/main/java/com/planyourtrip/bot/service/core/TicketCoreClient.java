@@ -29,5 +29,6 @@ public interface TicketCoreClient {
     TicketDto getTicketById(@Param Long id);
 
     @RequestLine("PUT /{id}")
+    @Headers("Content-Type: application/json")
     TicketDto updateTicket(@Param Long id, @RequestBody TicketDto ticketDto);
 }

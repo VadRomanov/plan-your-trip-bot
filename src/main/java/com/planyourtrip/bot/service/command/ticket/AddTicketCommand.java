@@ -43,18 +43,23 @@ public class AddTicketCommand extends AbstractCommand {
     public ResponseDto processMessage(MessageDto messageDto) {
         return switch (TicketUtil.State.valueOf(messageDto.getState().getState())) {
             case AWAIT_DEPARTURE -> processDepartureResponse(messageDto);
-            case AWAIT_DEPART_DT -> processDepartureDtResponse(messageDto);
+            case AWAIT_DEPART_DATE -> processDepartureDateResponse(messageDto);
+            case AWAIT_DEPART_TIME -> processDepartureTimeResponse(messageDto);
             case AWAIT_ARRIVAL -> processArrivalResponse(messageDto);
-            case AWAIT_ARRIVE_DT -> processArrivalDtResponse(messageDto);
+            case AWAIT_ARRIVE_DATE -> processArrivalDateResponse(messageDto);
+            case AWAIT_ARRIVE_TIME -> processArrivalTimeResponse(messageDto);
             case AWAIT_FILE -> processFileResponse(messageDto);
             case AWAIT_TYPE -> returnErrorMessage();
         };
     }
 
     private ResponseDto processTripIdResponse(long tripId) {
+        var keyboard = TicketUtil.getTickerTypesKeyboard(tripId);
+        keyboard.add(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_TYPE.name())));
         return ResponseDto.builder()
                 .text(BotAnswer.ADD_TICKET_TYPE_REQUEST)
-                .keyboard(TicketUtil.getTickerTypesKeyboard(tripId))
+                .keyboard(keyboard)
                 .build();
     }
 
@@ -68,6 +73,8 @@ public class AddTicketCommand extends AbstractCommand {
                 .setState(TicketUtil.State.AWAIT_DEPARTURE.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.ADD_TICKET_DEPARTURE_REQUEST)
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_DEPARTURE.name()))))
                 .build();
     }
 
@@ -76,21 +83,39 @@ public class AddTicketCommand extends AbstractCommand {
         ticketService.setDeparture(messageDto.getMsgText(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_DEPART_DT.name()));
+                .setState(TicketUtil.State.AWAIT_DEPART_DATE.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_DEPARTURE_DT_REQUEST)
+                .text(BotAnswer.ADD_TICKET_DEPARTURE_DATE_REQUEST)
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_DEPART_DATE.name()))))
                 .build();
     }
 
-    private ResponseDto processDepartureDtResponse(MessageDto messageDto) {
+    private ResponseDto processDepartureDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var departureDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticketService.setDepartureDt(departureDt, chatId);
+        var departureDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        ticketService.setDepartDate(departureDate, chatId);
+        getUserStateManager().setState(chatId, new UserState()
+                .setResponsibleCommand(getCommandType())
+                .setState(TicketUtil.State.AWAIT_DEPART_TIME.name()));
+        return ResponseDto.builder()
+                .text(format(BotAnswer.ADD_TICKET_DEPARTURE_TIME_REQUEST))
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_DEPART_TIME.name()))))
+                .build();
+    }
+
+    private ResponseDto processDepartureTimeResponse(MessageDto messageDto) {
+        long chatId = messageDto.getChatId();
+        var departureTime = DateTimeUtils.parseTime(messageDto.getMsgText());
+        ticketService.setDepartTime(departureTime, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
                 .setState(TicketUtil.State.AWAIT_ARRIVAL.name()));
         return ResponseDto.builder()
                 .text(format(BotAnswer.ADD_TICKET_ARRIVAL_REQUEST))
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_ARRIVAL.name()))))
                 .build();
     }
 
@@ -99,23 +124,39 @@ public class AddTicketCommand extends AbstractCommand {
         ticketService.setArrival(messageDto.getMsgText(), chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
-                .setState(TicketUtil.State.AWAIT_ARRIVE_DT.name()));
+                .setState(TicketUtil.State.AWAIT_ARRIVE_DATE.name()));
         return ResponseDto.builder()
-                .text(BotAnswer.ADD_TICKET_ARRIVAL_DT_REQUEST)
+                .text(BotAnswer.ADD_TICKET_ARRIVAL_DATE_REQUEST)
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_ARRIVE_DATE.name()))))
                 .build();
     }
 
-    private ResponseDto processArrivalDtResponse(MessageDto messageDto) {
+    private ResponseDto processArrivalDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var arrivalDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticketService.setArrivalDt(arrivalDt, chatId);
+        var arrivalDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        ticketService.setArriveDate(arrivalDate, chatId);
+        getUserStateManager().setState(chatId, new UserState()
+                .setResponsibleCommand(getCommandType())
+                .setState(TicketUtil.State.AWAIT_ARRIVE_TIME.name()));
+        return ResponseDto.builder()
+                .text(format(BotAnswer.ADD_TICKET_ARRIVAL_TIME_REQUEST))
+                .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_ARRIVE_TIME.name()))))
+                .build();
+    }
+
+    private ResponseDto processArrivalTimeResponse(MessageDto messageDto) {
+        long chatId = messageDto.getChatId();
+        var arrivalTime = DateTimeUtils.parseTime(messageDto.getMsgText());
+        ticketService.setArriveTime(arrivalTime, chatId);
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
                 .setState(TicketUtil.State.AWAIT_FILE.name()));
         return ResponseDto.builder()
                 .text(format(BotAnswer.ADD_TICKET_FILE_REQUEST))
                 .keyboard(List.of(new ReplyKeyboardBuilder.KeyboardButton(BotAnswer.SKIP,
-                        getCommandType().getName())))
+                        String.format("%s/%s", getCommandType().getName(), TicketUtil.State.AWAIT_FILE.name()))))
                 .build();
     }
 

@@ -29,9 +29,6 @@ public class TripDto {
 
     @Override
     public String toString() {
-        return String.format("""
-                <b>%s%s</b>
-                Даты: %s - %s
-                """, name, expired ? BotAnswer.EXPIRED : Strings.EMPTY, startDate, endDate);
+        return String.format("%s%s (%s - %s)", name, expired ? BotAnswer.EXPIRED : Strings.EMPTY, startDate, endDate);
     }
 }

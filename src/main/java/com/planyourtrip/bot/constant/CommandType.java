@@ -6,9 +6,9 @@ import lombok.Getter;
 public enum CommandType {
     NEW_TRIP("new_trip", "Create a new trip"),
     MY_TRIPS("my_trips", "List all your trips"),
-    DELETE_TRIP("delete_trip", "Delete current trip"),
+    DELETE_TRIP("delete_trip", "Delete trip"),
     DUPLICATE_TRIP("duplicate_trip", "Create a copy of an existing trip"),
-    EDIT_TRIP("edit_trip", "Edit current trip"),
+    EDIT_TRIP("edit_trip", "Edit trip"),
 
     ADD_ACCOMMODATION("add_accommodation", "Add a accommodation"),
     EDIT_ACCOMMODATION("edit_add_accommodation", "Edit accommodation details"),
@@ -29,10 +29,10 @@ public enum CommandType {
     MEMBERS("members", "List all trip members"),
     DELETE_MEMBER("delete_member", "Delete a participant (only for admin of a trip)"),
     MY_MEMBERS("my_members", "List all your members for all trips"),
-    LEAVE_TRIP("leave_trip", "Leave the current trip"),
+    LEAVE_TRIP("leave_trip", "Leave the trip"),
 
     HELP("help", "Show help and available commands"),
-    SUMMARY("summary", "Show summary of the current trip"),
+    SUMMARY("summary", "Show summary of the trip"),
     MENU("menu", "Open main menu with navigation options"),
     START("start", "Start using the bot"),
     LANGUAGE("language", "Change your preferred language"),

@@ -32,8 +32,10 @@ public class EditTicketCommand extends AbstractEditCommand {
             case AWAIT_TYPE -> processTypeResponse(messageDto);
             case AWAIT_DEPARTURE -> processDepartureResponse(messageDto);
             case AWAIT_ARRIVAL -> processArrivalResponse(messageDto);
-            case AWAIT_DEPART_DT -> processDepartTimeResponse(messageDto);
-            case AWAIT_ARRIVE_DT -> processArriveTimeResponse(messageDto);
+            case AWAIT_DEPART_DATE -> processDepartDateResponse(messageDto);
+            case AWAIT_DEPART_TIME -> processDepartTimeResponse(messageDto);
+            case AWAIT_ARRIVE_DATE -> processArriveDateResponse(messageDto);
+            case AWAIT_ARRIVE_TIME -> processArriveTimeResponse(messageDto);
             case AWAIT_FILE -> processFileResponse(messageDto);
         };
     }
@@ -44,7 +46,7 @@ public class EditTicketCommand extends AbstractEditCommand {
         return ResponseDto.builder()
                 .text(tickets.isEmpty() ? BotAnswer.MY_TICKETS_EMPTY_RESPONSE : BotAnswer.CHOOSE_TICKET_REQUEST)
                 .keyboard(tickets.isEmpty()
-                        ? ReplyKeyboardBuilder.buildNewEntityButton(CommandType.ADD_TICKET)
+                        ? ReplyKeyboardBuilder.buildActionToTripButton(tripId, CommandType.ADD_TICKET)
                         : ReplyKeyboardBuilder.buildEntitiesButtons(TicketUtil.mapTicketsToMap(tickets), tripId,
                         getCommandType()))
                 .build();
@@ -90,6 +92,7 @@ public class EditTicketCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -101,6 +104,7 @@ public class EditTicketCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -112,30 +116,59 @@ public class EditTicketCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
+                .build();
+    }
+
+    private ResponseDto processDepartDateResponse(MessageDto messageDto) {
+        long chatId = messageDto.getChatId();
+        var ticket = ticketService.getTicketToUpdate(chatId);
+        var departureDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        ticket.setDepartureTime(DateTimeUtils.addDate(ticket.getDepartureTime(), departureDate));
+        ticketService.updateTicket(ticket, chatId);
+        getUserStateManager().clearState(messageDto.getChatId());
+        return ResponseDto.builder()
+                .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
     private ResponseDto processDepartTimeResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
         var ticket = ticketService.getTicketToUpdate(chatId);
-        var departureDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticket.setDepartureTime(departureDt);
+        var departureTime = DateTimeUtils.parseTime(messageDto.getMsgText());
+        ticket.setDepartureTime(DateTimeUtils.addTime(ticket.getDepartureTime(), departureTime));
         ticketService.updateTicket(ticket, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
+                .build();
+    }
+
+    private ResponseDto processArriveDateResponse(MessageDto messageDto) {
+        long chatId = messageDto.getChatId();
+        var ticket = ticketService.getTicketToUpdate(chatId);
+        var arrivalDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        ticket.setArrivalTime(DateTimeUtils.addDate(ticket.getArrivalTime(), arrivalDate));
+        ticketService.updateTicket(ticket, chatId);
+        getUserStateManager().clearState(messageDto.getChatId());
+        return ResponseDto.builder()
+                .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
     private ResponseDto processArriveTimeResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
         var ticket = ticketService.getTicketToUpdate(chatId);
-        var arrivalDt = DateTimeUtils.parseDatetime(messageDto.getMsgText());
-        ticket.setArrivalTime(arrivalDt);
+        var arrivalTime = DateTimeUtils.parseTime(messageDto.getMsgText());
+        ticket.setArrivalTime(DateTimeUtils.addTime(ticket.getArrivalTime(), arrivalTime));
         ticketService.updateTicket(ticket, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
@@ -149,6 +182,7 @@ public class EditTicketCommand extends AbstractEditCommand {
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
                 .text(BotAnswer.DONE)
+                .keyboard(defaultKeyboard())
                 .build();
     }
 
