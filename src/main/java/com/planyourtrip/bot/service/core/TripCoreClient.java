@@ -6,10 +6,8 @@ import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Collection;
 
@@ -36,5 +34,6 @@ public interface TripCoreClient {
     Collection<TripDto> getTripsByUser(@Param Long telegramId);
 
     @RequestLine("GET /{id}/summary")
-    ResponseEntity<?> getTripSummary(@Param Long id, @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader);
+    @Headers("Accept: {acceptHeader}")
+    ResponseEntity<?> getTripSummary(@Param("id") Long id, @Param("acceptHeader") String acceptHeader);
 }
