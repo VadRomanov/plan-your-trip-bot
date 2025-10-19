@@ -10,13 +10,12 @@ import feign.codec.Encoder;
 import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
-import feign.optionals.OptionalDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HttpClientProperties.class)
 public class FeignConfig {
     private final ObjectMapper objectMapper;
-  //  private final FeignErrorDecoder feignErrorDecoder;
     private final HttpClientProperties httpClientProperties;
-
-    @Qualifier("feignHttpClientConnectionManager")
     private final PoolingHttpClientConnectionManager poolingHttpClientConnectionManager;
 
     @Bean
@@ -40,7 +36,12 @@ public class FeignConfig {
 
     @Bean
     public Decoder feignDecoder() {
-        return new OptionalDecoder(new JacksonDecoder(objectMapper));
+        return ((response, type) -> {
+            if (type.equals(byte[].class)) {
+                return IOUtils.toByteArray(response.body().asInputStream());
+            }
+            return new JacksonDecoder(objectMapper).decode(response, type);
+        });
     }
 
     @Bean
@@ -52,13 +53,6 @@ public class FeignConfig {
     public Contract feignContract() {
         return new Contract.Default();
     }
-
-/*
-    @Bean
-    public ErrorDecoder feignErrorDecoder() {
-        return feignErrorDecoder;
-    }
-*/
 
     @Bean
     public Logger.Level feignLoggerLevel() {

@@ -9,9 +9,9 @@ public interface TripService {
 
     void createTrip(String name, long userId, long chatId);
 
-    void setStartDt(LocalDate startDt, long chatId);
+    void setStartDate(LocalDate startDate, long chatId);
 
-    void setEndDt(LocalDate endDt, long chatId);
+    void setEndDate(LocalDate endDate, long chatId);
 
     Collection<TripDto> getTripsByTelegramId(long telegramId);
 

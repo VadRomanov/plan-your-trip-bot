@@ -25,20 +25,22 @@ import static java.util.Objects.nonNull;
 public class TicketServiceImpl implements TicketService {
     private final TicketCoreClient ticketCoreClient;
 
-    private static final Map<Long, TicketDto> TICKET_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, TicketDto.TicketDtoBuilder> TICKET_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
     private static final Map<Long, TicketDto> TICKET_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createTicket(int type, long tripId, long chatId) {
         log.debug("Create ticket {}, chatId {}", type, chatId);
-        TICKET_DTO_CHAT_CONTAINER.put(chatId, new TicketDto(tripId).setType(TicketType.findByCode(type)));
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, TicketDto.builder()
+                .tripId(tripId)
+                .type(TicketType.findByCode(type)));
     }
 
     @Override
     public void setDeparture(String departure, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket departure {}, chatId {}", departure, chatId);
-        ticket.setDeparture(departure);
+        ticket.departure(departure);
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 
@@ -46,7 +48,7 @@ public class TicketServiceImpl implements TicketService {
     public void setArrival(String arrival, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket arrival {}, chatId {}", arrival, chatId);
-        ticket.setArrival(arrival);
+        ticket.arrival(arrival);
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 
@@ -54,49 +56,51 @@ public class TicketServiceImpl implements TicketService {
     public void setDepartDate(LocalDate date, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket departure date {}, chatId {}", date, chatId);
-        ticket.setDepartureTime(DateTimeUtils.toOffsetDateTime(date));
+        ticket.departureTime(DateTimeUtils.toOffsetDateTime(date));
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 
     @Override
     public void setDepartTime(LocalTime time, long chatId) {
-        var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        var ticketBuilder = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        var ticket = ticketBuilder.build();
         log.debug("Set ticket departure time {}, chatId {}", time, chatId);
         var departureDt = DateTimeUtils.addTime(ticket.getDepartureTime(), time);
         if (nonNull(ticket.getArrivalTime()) && ticket.getArrivalTime().isBefore(departureDt)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        ticket.setDepartureTime(departureDt);
-        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
+        ticketBuilder.departureTime(departureDt);
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticketBuilder);
     }
 
     @Override
     public void setArriveDate(LocalDate date, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set ticket arrival date {}, chatId {}", date, chatId);
-        ticket.setArrivalTime(DateTimeUtils.toOffsetDateTime(date));
+        ticket.arrivalTime(DateTimeUtils.toOffsetDateTime(date));
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 
     @Override
     public void setArriveTime(LocalTime time, long chatId) {
-        var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        var ticketBuilder = TICKET_DTO_CHAT_CONTAINER.get(chatId);
+        var ticket = ticketBuilder.build();
         log.debug("Set ticket arrival time {}, chatId {}", time, chatId);
-        var arrivalDt = DateTimeUtils.addTime(ticket.getArrivalTime(), time);
-        if (nonNull(ticket.getDepartureTime()) && ticket.getDepartureTime().isAfter(arrivalDt)) {
+        var arriveDt = DateTimeUtils.addTime(ticket.getArrivalTime(), time);
+        if (nonNull(ticket.getDepartureTime()) && ticket.getDepartureTime().isAfter(arriveDt)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        ticket.setArrivalTime(arrivalDt);
-        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
+        ticketBuilder.arrivalTime(arriveDt);
+        TICKET_DTO_CHAT_CONTAINER.put(chatId, ticketBuilder);
     }
 
     @Override
     public void setFileId(String fileId, long chatId) {
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set file_id {}, chatId {}", fileId, chatId);
-        ticket.setFileUrl(fileId);
+        ticket.fileUrl(fileId);
         TICKET_DTO_CHAT_CONTAINER.put(chatId, ticket);
     }
 
@@ -132,7 +136,7 @@ public class TicketServiceImpl implements TicketService {
     public TicketDto commitNewTicket(long chatId) {
         log.debug("Commit ticket for chatId {}", chatId);
         var ticket = TICKET_DTO_CHAT_CONTAINER.get(chatId);
-        var savedTicket = ticketCoreClient.createTicket(ticket);
+        var savedTicket = ticketCoreClient.createTicket(ticket.build());
         TICKET_DTO_CHAT_CONTAINER.remove(chatId);
 
         log.info("Ticket {} for chatId {} commited", ticket, chatId);

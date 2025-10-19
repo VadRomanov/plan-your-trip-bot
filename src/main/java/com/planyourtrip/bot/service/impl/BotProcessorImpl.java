@@ -68,7 +68,6 @@ public class BotProcessorImpl implements BotProcessor {
     private ResponseDto processCallback(CallbackQuery callback) {
         log.info("Message was recognized as callback {} chatId {}", callback.getId(),
                 callback.getMessage().getChatId());
-        userStateManager.clearState(callback.getMessage().getChatId());
         var callbackDto = telegramMapper.toCallbackDto(callback);
 
         return eventHandler.handleEvent(callbackDto);

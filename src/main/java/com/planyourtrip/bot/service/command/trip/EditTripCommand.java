@@ -41,8 +41,8 @@ public class EditTripCommand extends AbstractEditCommand {
     public ResponseDto processMessage(MessageDto messageDto) {
         return switch (TripUtil.State.valueOf(messageDto.getState().getState())) {
             case AWAIT_NAME -> processNameResponse(messageDto);
-            case AWAIT_START_DT -> processStartDtResponse(messageDto);
-            case AWAIT_END_DT -> processEndDtResponse(messageDto);
+            case AWAIT_START_DT -> processStartDateResponse(messageDto);
+            case AWAIT_END_DT -> processEndDateResponse(messageDto);
         };
     }
 
@@ -93,11 +93,11 @@ public class EditTripCommand extends AbstractEditCommand {
                 .build();
     }
 
-    private ResponseDto processStartDtResponse(MessageDto messageDto) {
+    private ResponseDto processStartDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
         var trip = tripService.getTripToUpdate(chatId);
-        var startDt = DateTimeUtils.parseDate(messageDto.getMsgText());
-        trip.setStartDate(startDt);
+        var startDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        trip.setStartDate(startDate);
         tripService.updateTrip(trip, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()
@@ -106,11 +106,11 @@ public class EditTripCommand extends AbstractEditCommand {
                 .build();
     }
 
-    private ResponseDto processEndDtResponse(MessageDto messageDto) {
+    private ResponseDto processEndDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
         var trip = tripService.getTripToUpdate(chatId);
-        var endDt = DateTimeUtils.parseDate(messageDto.getMsgText());
-        trip.setEndDate(endDt);
+        var endDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        trip.setEndDate(endDate);
         tripService.updateTrip(trip, chatId);
         getUserStateManager().clearState(messageDto.getChatId());
         return ResponseDto.builder()

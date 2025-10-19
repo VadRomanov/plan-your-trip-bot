@@ -5,8 +5,8 @@ import com.planyourtrip.bot.dto.domain.TripDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collection;
@@ -35,5 +35,5 @@ public interface TripCoreClient {
 
     @RequestLine("GET /{id}/summary")
     @Headers("Accept: {acceptHeader}")
-    ResponseEntity<?> getTripSummary(@Param("id") Long id, @Param("acceptHeader") String acceptHeader);
+    Response getTripSummary(@Param("id") Long id, @Param("acceptHeader") String acceptHeader);
 }

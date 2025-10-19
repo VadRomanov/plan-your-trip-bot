@@ -34,7 +34,7 @@ public class DeleteTripCommand extends AbstractDeleteCommand {
     protected ResponseDto requestConfirmation(long id) {
         var trip = tripService.getTripById(id);
         var text = String.format(BotAnswer.DELETE_TRIP_CONFIRMATION_REQUEST, trip.getName(),
-                trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY);
+                trip.isExpired() ? BotAnswer.EXPIRED : Strings.EMPTY);
         return requestConfirmation(text, id);
     }
 

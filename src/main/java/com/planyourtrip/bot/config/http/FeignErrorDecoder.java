@@ -28,6 +28,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
     @Override
     public Exception decode(String methodKey, Response response) {
+        //todo: проверить работает ли
         if (response.status() == 404) {
             return BusinessException.builder(ResponseCode.ENTITY_NOT_FOUND)
                     .build();

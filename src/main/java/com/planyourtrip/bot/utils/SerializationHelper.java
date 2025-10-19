@@ -8,7 +8,6 @@ import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
-import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -26,8 +25,7 @@ public class SerializationHelper {
         try (var inputStream = httpEntity.getContent()) {
             return canDeserializeAndGet(inputStream, clazz);
         } catch (Exception e) {
-            log.debug("Cannot deserialize input stream to type {}. Reason: {}, trace: {}",
-                    clazz, e, Arrays.asList(e.getStackTrace()));
+            log.error("Cannot deserialize input stream to type {}", clazz, e);
             return null;
         }
     }
@@ -38,8 +36,7 @@ public class SerializationHelper {
         try {
             return objectMapper.readValue(bytes, clazz);
         } catch (Exception e) {
-            log.debug("Cannot deserialize bytes to type {}. Reason: {}, trace: {}",
-                    clazz, e, Arrays.asList(e.getStackTrace()));
+            log.error("Cannot deserialize bytes to type {}", clazz, e);
             return null;
         }
     }
@@ -56,8 +53,7 @@ public class SerializationHelper {
         try {
             return objectMapper.readValue(inputStream, clazz);
         } catch (Exception e) {
-            log.debug("Cannot deserialize input stream to type {}. Reason: {}, trace: {}",
-                    clazz, e, Arrays.asList(e.getStackTrace()));
+            log.error("Cannot deserialize input stream to type {}", clazz, e);
             return null;
         }
     }

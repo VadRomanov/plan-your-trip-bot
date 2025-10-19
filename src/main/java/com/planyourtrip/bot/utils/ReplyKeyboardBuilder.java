@@ -27,7 +27,7 @@ public class ReplyKeyboardBuilder {
         List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
         for (var trip : trips) {
             var newTripButton = new ReplyKeyboardBuilder.KeyboardButton(
-                    String.format("%s%s", trip.getName(), trip.getExpired() ? BotAnswer.EXPIRED : Strings.EMPTY),
+                    String.format("%s%s", trip.getName(), trip.isExpired() ? BotAnswer.EXPIRED : Strings.EMPTY),
                     String.format("%s/%s", commandType.getName(), trip.getId())
             );
             buttons.add(newTripButton);
@@ -107,6 +107,28 @@ public class ReplyKeyboardBuilder {
                         actionType.getDescription(),
                         String.format("%s/%s", actionType.getName(), tripId)))
                 .forEach(buttons::add);
+        return buttons;
+    }
+
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildSkipAndCompleteButton(CommandType command) {
+        var buttons = buildSkipButton(command);
+        buttons.addAll(buildCompleteButton(command));
+        return buttons;
+    }
+
+    public List<ReplyKeyboardBuilder.KeyboardButton> buildCompleteButton(CommandType command) {
+        List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(
+                BotAnswer.COMPLETE,
+                String.format("%s/%s", command.getName(), BotAnswer.COMPLETE)));
+        return buttons;
+    }
+
+    private List<ReplyKeyboardBuilder.KeyboardButton> buildSkipButton(CommandType command) {
+        List<ReplyKeyboardBuilder.KeyboardButton> buttons = new ArrayList<>();
+        buttons.add(new ReplyKeyboardBuilder.KeyboardButton(
+                BotAnswer.SKIP,
+                String.format("%s/%s", command.getName(), BotAnswer.SKIP)));
         return buttons;
     }
 

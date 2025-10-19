@@ -23,20 +23,22 @@ import static java.util.Objects.nonNull;
 public class AccommodationServiceImpl implements AccommodationService {
     private final AccommodationCoreClient accommodationCoreClient;
 
-    private static final Map<Long, AccommodationDto> ACCOMMODATION_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, AccommodationDto.AccommodationDtoBuilder> ACCOMMODATION_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
     private static final Map<Long, AccommodationDto> ACCOMMODATION_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
-    public void createAccommodation(int code, long tripId, long chatId) {
+    public void createAccommodation(int type, long tripId, long chatId) {
         log.debug("Create accommodation, chatId {}", chatId);
-        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, new AccommodationDto(tripId).setType(AccommodationType.findByCode(code)));
+        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, AccommodationDto.builder()
+                .tripId(tripId)
+                .type(AccommodationType.findByCode(type)));
     }
 
     @Override
     public void setName(String name, long chatId) {
         var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set accommodation name {}, chatId {}", name, chatId);
-        accommodation.setName(name);
+        accommodation.name(name);
         ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodation);
     }
 
@@ -44,39 +46,41 @@ public class AccommodationServiceImpl implements AccommodationService {
     public void setAddress(String address, long chatId) {
         var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set accommodation address {}, chatId {}", address, chatId);
-        accommodation.setAddress(address);
+        accommodation.address(address);
         ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodation);
     }
 
     @Override
     public void setCheckInDate(LocalDate checkInDate, long chatId) {
-        var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodationBuilder = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodation = accommodationBuilder.build();
         log.debug("Set accommodation check-in date {}, chatId {}", checkInDate, chatId);
         if (nonNull(accommodation.getCheckOutDate()) && accommodation.getCheckOutDate().isBefore(checkInDate)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        accommodation.setCheckInDate(checkInDate);
-        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodation);
+        accommodationBuilder.checkInDate(checkInDate);
+        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodationBuilder);
     }
 
     @Override
     public void setCheckOutDate(LocalDate checkOutDate, long chatId) {
-        var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodationBuilder = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
+        var accommodation = accommodationBuilder.build();
         log.debug("Set accommodation check-out date {}, chatId {}", checkOutDate, chatId);
         if (nonNull(accommodation.getCheckInDate()) && accommodation.getCheckInDate().isAfter(checkOutDate)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        accommodation.setCheckOutDate(checkOutDate);
-        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodation);
+        accommodationBuilder.checkOutDate(checkOutDate);
+        ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodationBuilder);
     }
 
     @Override
     public void setFileId(String fileId, long chatId) {
         var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
         log.debug("Set file_id {}, chatId {}", fileId, chatId);
-        accommodation.setFileUrl(fileId);
+        accommodation.fileUrl(fileId);
         ACCOMMODATION_DTO_CHAT_CONTAINER.put(chatId, accommodation);
     }
 
@@ -113,7 +117,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     public AccommodationDto commitNewAccommodation(long chatId) {
         log.debug("Commit accommodation for chatId {}", chatId);
         var accommodation = ACCOMMODATION_DTO_CHAT_CONTAINER.get(chatId);
-        var savedAccommodation = accommodationCoreClient.createAccommodation(accommodation);
+        var savedAccommodation = accommodationCoreClient.createAccommodation(accommodation.build());
         ACCOMMODATION_DTO_CHAT_CONTAINER.remove(chatId);
 
         log.info("Accommodation {} for chatId {} commited", accommodation, savedAccommodation);

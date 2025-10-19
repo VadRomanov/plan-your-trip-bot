@@ -23,37 +23,41 @@ import static java.util.Objects.nonNull;
 public class TripServiceImpl implements TripService {
     private final TripCoreClient tripCoreClient;
 
-    private static final Map<Long, TripDto> TRIP_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
+    private static final Map<Long, TripDto.TripDtoBuilder> TRIP_DTO_CHAT_CONTAINER = new ConcurrentHashMap<>();
     private static final Map<Long, TripDto> TRIP_DTO_CHAT_UPDATE_CONTAINER = new ConcurrentHashMap<>();
 
     @Override
     public void createTrip(String name, long userId, long chatId) {
         log.debug("Create trip {}, chatId {}", name, chatId);
-        TRIP_DTO_CHAT_CONTAINER.put(chatId, new TripDto(name, Set.of(userId)));
+        TRIP_DTO_CHAT_CONTAINER.put(chatId, TripDto.builder()
+                .name(name)
+                .userIds(Set.of(userId)));
     }
 
     @Override
-    public void setStartDt(LocalDate startDt, long chatId) {
-        var trip = TRIP_DTO_CHAT_CONTAINER.get(chatId);
-        log.debug("Set trip {} start date {}, chatId {}", trip.getName(), startDt, chatId);
-        if (nonNull(trip.getEndDate()) && trip.getEndDate().isBefore(startDt)) {
+    public void setStartDate(LocalDate startDate, long chatId) {
+        var tripBuilder = TRIP_DTO_CHAT_CONTAINER.get(chatId);
+        var trip = tripBuilder.build();
+        log.debug("Set trip {} start date {}, chatId {}", trip.getName(), startDate, chatId);
+        if (nonNull(trip.getEndDate()) && trip.getEndDate().isBefore(startDate)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        trip.setStartDate(startDt);
-        TRIP_DTO_CHAT_CONTAINER.put(chatId, trip);
+        tripBuilder.startDate(startDate);
+        TRIP_DTO_CHAT_CONTAINER.put(chatId, tripBuilder);
     }
 
     @Override
-    public void setEndDt(LocalDate endDt, long chatId) {
-        var trip = TRIP_DTO_CHAT_CONTAINER.get(chatId);
-        log.debug("Set trip {} end date {}, chatId {}", trip.getName(), endDt, chatId);
-        if (nonNull(trip.getStartDate()) && trip.getStartDate().isAfter(endDt)) {
+    public void setEndDate(LocalDate endDate, long chatId) {
+        var tripBuilder = TRIP_DTO_CHAT_CONTAINER.get(chatId);
+        var trip = tripBuilder.build();
+        log.debug("Set trip {} end date {}, chatId {}", trip.getName(), endDate, chatId);
+        if (nonNull(trip.getStartDate()) && trip.getStartDate().isAfter(endDate)) {
             throw BusinessException.builder(ResponseCode.INVALID_TIMELINE)
                     .build();
         }
-        trip.setEndDate(endDt);
-        TRIP_DTO_CHAT_CONTAINER.put(chatId, trip);
+        tripBuilder.endDate(endDate);
+        TRIP_DTO_CHAT_CONTAINER.put(chatId, tripBuilder);
     }
 
     @Override
@@ -88,7 +92,7 @@ public class TripServiceImpl implements TripService {
     public TripDto commitNewTrip(long chatId) {
         log.debug("Commit trip for chatId {}", chatId);
         var trip = TRIP_DTO_CHAT_CONTAINER.get(chatId);
-        var savedTrip = tripCoreClient.createTrip(trip);
+        var savedTrip = tripCoreClient.createTrip(trip.build());
         TRIP_DTO_CHAT_CONTAINER.remove(chatId);
 
         log.info("Trip {} for chatId {} commited", trip, chatId);

@@ -7,7 +7,7 @@ import com.planyourtrip.bot.dto.CommandDto;
 import com.planyourtrip.bot.dto.MessageDto;
 import com.planyourtrip.bot.dto.ResponseDto;
 import com.planyourtrip.bot.service.command.UserService;
-import com.planyourtrip.bot.service.command.impl.AbstractCommand;
+import com.planyourtrip.bot.service.command.impl.AbstractAddCommand;
 import com.planyourtrip.bot.service.command.trip.util.TripUtil;
 import com.planyourtrip.bot.service.state.UserState;
 import com.planyourtrip.bot.utils.DateTimeUtils;
@@ -24,7 +24,7 @@ import static java.lang.String.format;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NewTripCommand extends AbstractCommand {
+public class NewTripCommand extends AbstractAddCommand {
 
     private final TripService tripService;
     private final UserService userService;
@@ -36,15 +36,22 @@ public class NewTripCommand extends AbstractCommand {
 
     @Override
     public ResponseDto processCallback(CallbackDto callbackDto) {
-        return processInitResponse(callbackDto.getChatId());
+        var step = callbackDto.getCallbackData().size();
+        if (step == 1) {
+            return processInitResponse(callbackDto.getChatId());
+        } else if (step == 2) {
+            return processSkipOrCompleteResponse(callbackDto.getChatId(), callbackDto.getCallbackData().get(1));
+        } else {
+            return returnErrorMessage();
+        }
     }
 
     @Override
     public ResponseDto processMessage(MessageDto messageDto) {
         return switch (TripUtil.State.valueOf(messageDto.getState().getState())) {
             case AWAIT_NAME -> processNameResponse(messageDto);
-            case AWAIT_START_DT -> processStartDtResponse(messageDto);
-            case AWAIT_END_DT -> processEndDtResponse(messageDto);
+            case AWAIT_START_DT -> processStartDateResponse(messageDto);
+            case AWAIT_END_DT -> processEndDateResponse(messageDto);
         };
     }
 
@@ -65,31 +72,32 @@ public class NewTripCommand extends AbstractCommand {
                 .setState(TripUtil.State.AWAIT_START_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_START_DT_REQUEST)
+                .keyboard(ReplyKeyboardBuilder.buildSkipAndCompleteButton(getCommandType()))
                 .build();
     }
 
-    private ResponseDto processStartDtResponse(MessageDto messageDto) {
+    private ResponseDto processStartDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var startDt = DateTimeUtils.parseDate(messageDto.getMsgText());
-        tripService.setStartDt(startDt, chatId);
+        var startDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        tripService.setStartDate(startDate, chatId);
+        return prepareEndDateRequest(chatId);
+    }
+
+    private ResponseDto prepareEndDateRequest(long chatId) {
         getUserStateManager().setState(chatId, new UserState()
                 .setResponsibleCommand(getCommandType())
                 .setState(TripUtil.State.AWAIT_END_DT.name()));
         return ResponseDto.builder()
                 .text(BotAnswer.NEW_TRIP_END_DT_REQUEST)
+                .keyboard(ReplyKeyboardBuilder.buildCompleteButton(getCommandType()))
                 .build();
     }
 
-    private ResponseDto processEndDtResponse(MessageDto messageDto) {
+    private ResponseDto processEndDateResponse(MessageDto messageDto) {
         long chatId = messageDto.getChatId();
-        var endDt = DateTimeUtils.parseDate(messageDto.getMsgText());
-        tripService.setEndDt(endDt, chatId);
-        var trip = tripService.commitNewTrip(chatId);
-        getUserStateManager().clearState(chatId);
-        return ResponseDto.builder()
-                .text(format(BotAnswer.NEW_TRIP_FINAL_RESPONSE, trip.getName()))
-                .keyboard(getFinalKeyboard(trip.getId()))
-                .build();
+        var endDate = DateTimeUtils.parseDate(messageDto.getMsgText());
+        tripService.setEndDate(endDate, chatId);
+        return prepareFinalResponse(chatId);
     }
 
     @Override
@@ -101,6 +109,25 @@ public class NewTripCommand extends AbstractCommand {
                 CommandType.MY_TRIPS.getName())
         );
         return buttons;
+    }
+
+    @Override
+    protected ResponseDto prepareFinalResponse(long chatId) {
+        var trip = tripService.commitNewTrip(chatId);
+        getUserStateManager().clearState(chatId);
+        return ResponseDto.builder()
+                .text(format(BotAnswer.NEW_TRIP_FINAL_RESPONSE, trip.getName()))
+                .keyboard(getFinalKeyboard(trip.getId()))
+                .build();
+    }
+
+    @Override
+    protected ResponseDto processSkip(long chatId) {
+        var state = getUserStateManager().getState(chatId);
+        return switch (TripUtil.State.valueOf(state.getState())) {
+            case AWAIT_START_DT -> prepareEndDateRequest(chatId);
+            case AWAIT_NAME, AWAIT_END_DT -> returnErrorMessage();
+        };
     }
 
     @Override

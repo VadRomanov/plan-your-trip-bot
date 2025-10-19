@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 import java.util.List;
 
 @UtilityClass
-public class CallbackDataUtil {
+public class CallbackDataUtils {
     public CommandType getCommandType(List<String> callbackData) {
         return CommandType.valueOf(callbackData.getFirst().toUpperCase());
     }

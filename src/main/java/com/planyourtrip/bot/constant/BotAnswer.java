@@ -77,7 +77,12 @@ public class BotAnswer {
     public static final String CONFIRMED = "Да";
     public static final String CANCEL = "<< Назад";
     public static final String SKIP = "Пропустить";
+    public static final String COMPLETE = "Создать";
     public static final String DONE = "Готово!";
+    public static final String FROM = "с";
+    public static final String TILL = "по";
+    public static final String START = "отправление";
+    public static final String END = "прибытие";
 
     public static final String HELP_ANSWER = String.format("""
                     Я помогу тебе создать и управлять твоими путешествиями ✈️.
@@ -97,4 +102,43 @@ public class BotAnswer {
     public static final String SOMETHING_WRONG = """
             \uD83C\uDF0D Что-то пошло не так, давайте попробуем начать сначала.
             Нажмите, пожалуйста, на кнопку под этим сообщением, чтобы выбрать действие""";
+
+    public static final String TICKET_TYPE_PLANE = "Самолет";
+    public static final String TICKET_TYPE_TRAIN = "Поезд";
+    public static final String TICKET_TYPE_BUS = "Автобус";
+    public static final String TICKET_TYPE_CAR = "Автомобиль";
+    public static final String TICKET_TYPE_OTHER = "Неизвестный тип транспорта";
+
+    public static final String ACCOMMODATION_TYPE_HOTEL = "Отель";
+    public static final String ACCOMMODATION_TYPE_APARTMENTS = "Апартаменты";
+
+    public static final String NEW_TRIP_BUTTON_DESCRIPTION = "Create a new trip";
+    public static final String MY_TRIPS_BUTTON_DESCRIPTION = "List all your trips";
+    public static final String DELETE_TRIP_BUTTON_DESCRIPTION = "Delete trip";
+    public static final String DUPLICATE_TRIP_BUTTON_DESCRIPTION = "Create a copy of an existing trip";
+    public static final String EDIT_TRIP_BUTTON_DESCRIPTION = "Edit trip";
+    public static final String ADD_ACCOMMODATION_BUTTON_DESCRIPTION = "Add a accommodation";
+    public static final String EDIT_ACCOMMODATION_BUTTON_DESCRIPTION = "Edit accommodation details";
+    public static final String MY_ACCOMMODATIONS_BUTTON_DESCRIPTION = "List of accommodation bookings";
+    public static final String DELETE_ACCOMMODATION_BUTTON_DESCRIPTION = "Delete a accommodation";
+    public static final String ADD_TICKET_BUTTON_DESCRIPTION = "Add a new ticket";
+    public static final String MY_TICKETS_BUTTON_DESCRIPTION = "List a tickets";
+    public static final String DELETE_TICKET_BUTTON_DESCRIPTION = "Delete a ticket";
+    public static final String EDIT_TICKET_BUTTON_DESCRIPTION = "Edit ticket details";
+    public static final String ADD_NOTE_BUTTON_DESCRIPTION = "Add a note or task";
+    public static final String MY_NOTES_BUTTON_DESCRIPTION = "List of notes";
+    public static final String DELETE_NOTE_BUTTON_DESCRIPTION = "Delete a note";
+    public static final String EDIT_NOTE_BUTTON_DESCRIPTION = "Edit a note";
+    public static final String ADD_MEMBER_BUTTON_DESCRIPTION = "Invite a participant to the trip (only for admin of a trip)";
+    public static final String MEMBERS_BUTTON_DESCRIPTION = "List all trip members";
+    public static final String DELETE_MEMBER_BUTTON_DESCRIPTION = "Delete a participant (only for admin of a trip)";
+    public static final String MY_MEMBERS_BUTTON_DESCRIPTION = "List all your members for all trips";
+    public static final String LEAVE_TRIP_BUTTON_DESCRIPTION = "Leave the trip";
+    public static final String HELP_BUTTON_DESCRIPTION = "Show help and available commands";
+    public static final String SUMMARY_BUTTON_DESCRIPTION = "Show summary of the trip";
+    public static final String MENU_BUTTON_DESCRIPTION = "Open main menu with navigation options";
+    public static final String START_BUTTON_DESCRIPTION = "Start using the bot";
+    public static final String LANGUAGE_BUTTON_DESCRIPTION = "Change your preferred language";
+    public static final String DEFAULT_BUTTON_DESCRIPTION = "Service command for unavailable command";
+    public static final String CANCEL_BUTTON_DESCRIPTION = "Service command for canceling";
 }

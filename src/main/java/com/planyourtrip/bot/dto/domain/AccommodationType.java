@@ -1,6 +1,7 @@
 package com.planyourtrip.bot.dto.domain;
 
 
+import com.planyourtrip.bot.constant.BotAnswer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,8 +10,8 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum AccommodationType implements AbstractType {
-    HOTEL(0, "Отель"),
-    APARTMENTS(2, "Апартаменты");
+    HOTEL(0, BotAnswer.ACCOMMODATION_TYPE_HOTEL),
+    APARTMENTS(2, BotAnswer.ACCOMMODATION_TYPE_APARTMENTS);
 
     private final int code;
     private final String name;

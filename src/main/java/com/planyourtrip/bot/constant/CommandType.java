@@ -4,40 +4,40 @@ import lombok.Getter;
 
 @Getter
 public enum CommandType {
-    NEW_TRIP("new_trip", "Create a new trip"),
-    MY_TRIPS("my_trips", "List all your trips"),
-    DELETE_TRIP("delete_trip", "Delete trip"),
-    DUPLICATE_TRIP("duplicate_trip", "Create a copy of an existing trip"),
-    EDIT_TRIP("edit_trip", "Edit trip"),
+    NEW_TRIP("new_trip", BotAnswer.NEW_TRIP_BUTTON_DESCRIPTION),
+    MY_TRIPS("my_trips", BotAnswer.MY_TRIPS_BUTTON_DESCRIPTION),
+    DELETE_TRIP("delete_trip", BotAnswer.DELETE_TRIP_BUTTON_DESCRIPTION),
+    DUPLICATE_TRIP("duplicate_trip", BotAnswer.DUPLICATE_TRIP_BUTTON_DESCRIPTION),
+    EDIT_TRIP("edit_trip", BotAnswer.EDIT_TRIP_BUTTON_DESCRIPTION),
 
-    ADD_ACCOMMODATION("add_accommodation", "Add a accommodation"),
-    EDIT_ACCOMMODATION("edit_add_accommodation", "Edit accommodation details"),
-    MY_ACCOMMODATIONS("my_add_accommodations", "List of accommodation bookings"),
-    DELETE_ACCOMMODATION("delete_add_accommodation", "Delete a accommodation"),
+    ADD_ACCOMMODATION("add_accommodation", BotAnswer.ADD_ACCOMMODATION_BUTTON_DESCRIPTION),
+    EDIT_ACCOMMODATION("edit_add_accommodation", BotAnswer.EDIT_ACCOMMODATION_BUTTON_DESCRIPTION),
+    MY_ACCOMMODATIONS("my_add_accommodations", BotAnswer.MY_ACCOMMODATIONS_BUTTON_DESCRIPTION),
+    DELETE_ACCOMMODATION("delete_add_accommodation", BotAnswer.DELETE_ACCOMMODATION_BUTTON_DESCRIPTION),
 
-    ADD_TICKET("add_ticket", "Add a new ticket"),
-    MY_TICKETS("my_tickets", "List a tickets"),
-    DELETE_TICKET("delete_ticket", "Delete a ticket"),
-    EDIT_TICKET("edit_ticket", "Edit ticket details"),
+    ADD_TICKET("add_ticket", BotAnswer.ADD_TICKET_BUTTON_DESCRIPTION),
+    MY_TICKETS("my_tickets", BotAnswer.MY_TICKETS_BUTTON_DESCRIPTION),
+    DELETE_TICKET("delete_ticket", BotAnswer.DELETE_TICKET_BUTTON_DESCRIPTION),
+    EDIT_TICKET("edit_ticket", BotAnswer.EDIT_TICKET_BUTTON_DESCRIPTION),
 
-    ADD_NOTE("add_note", "Add a note or task"),
-    MY_NOTES("my_notes", "List of notes"),
-    DELETE_NOTE("delete_note", "Delete a note"),
-    EDIT_NOTE("edit_note", "Edit a note"),
+    ADD_NOTE("add_note", BotAnswer.ADD_NOTE_BUTTON_DESCRIPTION),
+    MY_NOTES("my_notes", BotAnswer.MY_NOTES_BUTTON_DESCRIPTION),
+    DELETE_NOTE("delete_note", BotAnswer.DELETE_NOTE_BUTTON_DESCRIPTION),
+    EDIT_NOTE("edit_note", BotAnswer.EDIT_NOTE_BUTTON_DESCRIPTION),
 
-    ADD_MEMBER("add_member", "Invite a participant to the trip (only for admin of a trip)"),
-    MEMBERS("members", "List all trip members"),
-    DELETE_MEMBER("delete_member", "Delete a participant (only for admin of a trip)"),
-    MY_MEMBERS("my_members", "List all your members for all trips"),
-    LEAVE_TRIP("leave_trip", "Leave the trip"),
+    ADD_MEMBER("add_member", BotAnswer.ADD_MEMBER_BUTTON_DESCRIPTION),
+    MEMBERS("members", BotAnswer.MEMBERS_BUTTON_DESCRIPTION),
+    DELETE_MEMBER("delete_member", BotAnswer.DELETE_MEMBER_BUTTON_DESCRIPTION),
+    MY_MEMBERS("my_members", BotAnswer.MY_MEMBERS_BUTTON_DESCRIPTION),
+    LEAVE_TRIP("leave_trip", BotAnswer.LEAVE_TRIP_BUTTON_DESCRIPTION),
 
-    HELP("help", "Show help and available commands"),
-    SUMMARY("summary", "Show summary of the trip"),
-    MENU("menu", "Open main menu with navigation options"),
-    START("start", "Start using the bot"),
-    LANGUAGE("language", "Change your preferred language"),
-    DEFAULT("default", "Service command for unavailable command"),
-    CANCEL("cancel", "Service command for canceling");
+    HELP("help", BotAnswer.HELP_BUTTON_DESCRIPTION),
+    SUMMARY("summary", BotAnswer.SUMMARY_BUTTON_DESCRIPTION),
+    MENU("menu", BotAnswer.MENU_BUTTON_DESCRIPTION),
+    START("start", BotAnswer.START_BUTTON_DESCRIPTION),
+    LANGUAGE("language", BotAnswer.LANGUAGE_BUTTON_DESCRIPTION),
+    DEFAULT("default", BotAnswer.DEFAULT_BUTTON_DESCRIPTION),
+    CANCEL("cancel", BotAnswer.CANCEL_BUTTON_DESCRIPTION);
 
     private final String name;
     private final String description;
